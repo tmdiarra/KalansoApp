@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cap Réussite CM1-CM2 – Parcours Guidé Pas à Pas, Cours Illustrés, Exercices & Suivi Parents</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+    h1, h2, h3, h4, .font-display { font-family: 'Fredoka', sans-serif; }
+    .step-active { background-color: #4f46e5; color: white; border-color: #4f46e5; transform: translateY(-2px); }
+    .step-done { background-color: #ecfdf5; color: #047857; border-color: #6ee7b7; }
+    .hint-box { transition: all 0.25s ease-in-out; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ========================================================= -->
+  <!-- BARRE SUPÉRIEURE DE NAVIGATION                            -->
+  <!-- ========================================================= -->
+  <header class="bg-indigo-950 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="bg-amber-400 text-indigo-950 p-2.5 rounded-2xl font-bold shadow-md flex items-center justify-center">
+          <i data-lucide="compass" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight">Cap Réussite CM1 • CM2</h1>
+            <span class="bg-indigo-800 text-amber-300 text-xs px-2.5 py-0.5 rounded-full font-semibold border border-indigo-600">
+              Parcours Pas à Pas • Rentrée 2026-2027 (AEFE / Homologué)
+            </span>
+          </div>
+          <p class="text-xs text-indigo-200">Leçons illustrées, Exercices d'entraînement, Quiz, Évaluations & Accès Parent Exclusif</p>
+        </div>
+      </div>
+
+      <!-- Boutons de changement d'espace -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="hidden sm:flex items-center gap-1.5 text-xs bg-indigo-900/90 border border-indigo-700 px-3 py-1.5 rounded-xl">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="syncStatusText">Sauvegarde Active</span>
+        </div>
+
+        <button onclick="switchRole('student')" id="btnRoleStudent" class="px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-amber-400 text-indigo-950 shadow flex items-center gap-1.5 transition">
+          <i data-lucide="backpack" class="w-4 h-4"></i> Mon Espace Élève
+        </button>
+        <button onclick="switchRole('parent')" id="btnRoleParent" class="px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-indigo-800 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition">
+          <i data-lucide="shield-check" class="w-4 h-4"></i> Espace Parent
+        </button>
+        <button onclick="switchRole('admin')" id="btnRoleAdmin" class="px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-indigo-800 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition">
+          <i data-lucide="sliders" class="w-4 h-4"></i> Enseignant
+        </button>
+        <button onclick="openModal('modalBeginnerGuide')" class="px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow flex items-center gap-1.5 transition">
+          <i data-lucide="help-circle" class="w-4 h-4"></i> Guide Mise en ligne
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENU PRINCIPAL -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- ========================================================= -->
+    <!-- 1. ESPACE ÉLÈVE INTUITIF (GUIDÉ PAS À PAS)                -->
+    <!-- ========================================================= -->
+    <section id="viewStudent" class="space-y-6">
+
+      <!-- Carte d'identité de l'élève + boussole du jour -->
+      <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-4">
+          <div id="studentAvatar" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center text-3xl font-bold shadow-md">
+            A
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Bonjour</span>
+              <select id="studentSelect" onchange="changeActiveStudent(this.value)" class="bg-indigo-50 border border-indigo-200 text-indigo-950 text-lg font-bold rounded-xl px-3 py-1 focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+              </select>
+              <span id="studentLevelBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Classe de CM2</span>
+            </div>
+            <div id="studentParentMessage" class="text-xs md:text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5 mt-2 inline-flex items-center gap-2">
+              <i data-lucide="heart" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+              <span>Message de tes parents</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compteurs motivants clairs -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full lg:w-auto">
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2.5 text-center">
+            <div class="text-[11px] text-amber-800 font-bold uppercase">Étoiles & XP</div>
+            <div id="studentXP" class="text-xl font-bold text-amber-950">0 XP</div>
+          </div>
+          <div class="bg-indigo-50 border border-indigo-200 rounded-2xl px-3.5 py-2.5 text-center">
+            <div class="text-[11px] text-indigo-800 font-bold uppercase">Chapitres finis</div>
+            <div id="studentCompCount" class="text-xl font-bold text-indigo-950">0 / 0</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-3.5 py-2.5 text-center">
+            <div class="text-[11px] text-emerald-800 font-bold uppercase">Défi 10 Problèmes</div>
+            <div id="studentProbCount" class="text-xl font-bold text-emerald-950">0 / 10</div>
+          </div>
+          <div class="bg-purple-50 border border-purple-200 rounded-2xl px-3.5 py-2.5 text-center">
+            <div class="text-[11px] text-purple-800 font-bold uppercase">Livres lus</div>
+            <div id="studentBookCount" class="text-xl font-bold text-purple-950">0 / 7</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Principal Élève simplifié en 4 grands boutons visuels -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <button onclick="switchStudentMainSection('parcours')" id="navBtnParcours" class="p-4 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-indigo-600 text-white border-indigo-600 shadow-md">
+          <div class="p-2.5 rounded-xl bg-white/20"><i data-lucide="book-open-check" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-sm md:text-base font-bold leading-tight">1. Mes Leçons & Exercices</div>
+            <div class="text-[11px] opacity-80">Parcours guidé pas à pas</div>
+          </div>
+        </button>
+
+        <button onclick="switchStudentMainSection('problems')" id="navBtnProblems" class="p-4 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white text-slate-800 border-slate-200 hover:border-indigo-300">
+          <div class="p-2.5 rounded-xl bg-emerald-100 text-emerald-700"><i data-lucide="calculator" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-sm md:text-base font-bold leading-tight">2. Défi 10 Problèmes</div>
+            <div class="text-[11px] text-slate-500">Méthode en 4 étapes</div>
+          </div>
+        </button>
+
+        <button onclick="switchStudentMainSection('homework')" id="navBtnHomework" class="p-4 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white text-slate-800 border-slate-200 hover:border-indigo-300">
+          <div class="p-2.5 rounded-xl bg-amber-100 text-amber-700"><i data-lucide="notebook-pen" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-sm md:text-base font-bold leading-tight">3. Cahier de Classe</div>
+            <div class="text-[11px] text-slate-500">Devoirs & Lectures</div>
+          </div>
+        </button>
+
+        <button onclick="switchStudentMainSection('bilan')" id="navBtnBilan" class="p-4 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white text-slate-800 border-slate-200 hover:border-indigo-300">
+          <div class="p-2.5 rounded-xl bg-purple-100 text-purple-700"><i data-lucide="award" class="w-6 h-6"></i></div>
+          <div>
+            <div class="text-sm md:text-base font-bold leading-tight">4. Mon Bilan & Repères</div>
+            <div class="text-[11px] text-slate-500">Mes progrès & diplômes</div>
+          </div>
+        </button>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- SECTION ÉLÈVE A : PARCOURS GUIDÉ PAS À PAS PAR MATIÈRE    -->
+      <!-- ========================================================= -->
+      <div id="studentSectionParcours" class="space-y-6">
+
+        <!-- ÉTAPE A1 : SÉLECTION DE LA MATIÈRE ET DU NIVEAU -->
+        <div id="parcoursHomeView" class="space-y-6">
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold">1</span>
+                Choisis ta matière puis ton chapitre du jour
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">Chaque chapitre te guide pas à pas : <strong>Leçon illustrée &rarr; Exercices &rarr; Quiz &rarr; Évaluation</strong>.</p>
+            </div>
+            <!-- Sélecteur Niveau CM1 / CM2 -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+              <span class="text-xs font-bold text-slate-500 px-2">Programme affiché :</span>
+              <button onclick="setCurriculumLevelFilter('AUTO')" id="lvlBtnAUTO" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm">Ma classe</button>
+              <button onclick="setCurriculumLevelFilter('CM1')" id="lvlBtnCM1" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-white">CM1</button>
+              <button onclick="setCurriculumLevelFilter('CM2')" id="lvlBtnCM2" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-white">CM2</button>
+              <button onclick="setCurriculumLevelFilter('ALL')" id="lvlBtnALL" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-white">CM1 + CM2</button>
+            </div>
+          </div>
+
+          <!-- Cartes des Matières -->
+          <div id="subjectCardsGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3"></div>
+
+          <!-- Liste des chapitres de la matière sélectionnée -->
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 id="selectedSubjectHeading" class="text-lg font-bold text-slate-900">Chapitres disponibles</h3>
+              <span id="selectedSubjectCount" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full"></span>
+            </div>
+            <div id="chaptersListGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          </div>
+        </div>
+
+        <!-- ÉTAPE A2 : VUE D'UN CHAPITRE EN MODE PAS À PAS (4 ÉTAPES) -->
+        <div id="parcoursModuleView" class="hidden space-y-6">
+          <!-- Fil d'Ariane + Bouton Retour -->
+          <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <button onclick="closeModuleStepView()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-2 transition">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> Retour aux chapitres
+            </button>
+            <div class="flex items-center gap-2">
+              <span id="activeModuleBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">CM1 • Français</span>
+              <span id="activeModuleBo" class="text-xs text-slate-400 hidden sm:inline"></span>
+            </div>
+          </div>
+
+          <!-- Titre du chapitre et Barre des 4 Étapes Pas à Pas -->
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-6">
+            <div>
+              <h2 id="activeModuleTitle" class="text-2xl font-bold text-slate-900">Titre du Chapitre</h2>
+              <p class="text-xs text-slate-500 mt-1">Suis les 4 étapes dans l'ordre pour maîtriser complètement ce chapitre :</p>
+            </div>
+
+            <!-- Stepper visuel 1 -> 2 -> 3 -> 4 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <button onclick="goToModuleStep(1)" id="stepBtn1" class="p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 step-active">
+                <span class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm shrink-0">1</span>
+                <div>
+                  <div class="text-xs font-bold uppercase opacity-80">Étape 1</div>
+                  <div class="text-sm font-bold">Leçon Illustrée</div>
+                </div>
+              </button>
+
+              <button onclick="goToModuleStep(2)" id="stepBtn2" class="p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white border-slate-200 text-slate-700">
+                <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-sm shrink-0">2</span>
+                <div>
+                  <div class="text-xs font-bold uppercase opacity-75">Étape 2</div>
+                  <div class="text-sm font-bold">Exercices Guidés</div>
+                </div>
+              </button>
+
+              <button onclick="goToModuleStep(3)" id="stepBtn3" class="p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white border-slate-200 text-slate-700">
+                <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-sm shrink-0">3</span>
+                <div>
+                  <div class="text-xs font-bold uppercase opacity-75">Étape 3</div>
+                  <div class="text-sm font-bold">Quiz Interactif</div>
+                </div>
+              </button>
+
+              <button onclick="goToModuleStep(4)" id="stepBtn4" class="p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white border-slate-200 text-slate-700">
+                <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-sm shrink-0">4</span>
+                <div>
+                  <div class="text-xs font-bold uppercase opacity-75">Étape 4</div>
+                  <div class="text-sm font-bold">Évaluation & Acquis</div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Contenu dynamique de l'étape sélectionnée -->
+            <div id="moduleStepContent" class="pt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- SECTION ÉLÈVE B : ATELIER 10 PROBLÈMES / SEMAINE          -->
+      <!-- ========================================================= -->
+      <div id="studentSectionProblems" class="hidden space-y-6">
+        <div class="bg-gradient-to-r from-emerald-800 to-teal-700 text-white rounded-3xl p-6 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span class="bg-amber-400 text-indigo-950 text-xs font-bold px-3 py-1 rounded-full uppercase">Programme Officiel Mathématiques Cycle 3</span>
+            <h2 class="text-2xl font-bold mt-2">Atelier des 10 Problèmes par Semaine (Modèle en 4 Phases)</h2>
+            <p class="text-emerald-100 text-xs md:text-sm max-w-3xl">
+              Pour chaque problème : <strong>1. Je lis et je comprends</strong> &rarr; <strong>2. Je cherche seul (ou j'ouvre le coup de pouce caché si j'ai besoin d'un schéma en barre)</strong> &rarr; <strong>3. Je calcule</strong> &rarr; <strong>4. Je vérifie ma réponse</strong>.
+            </p>
+          </div>
+          <div class="bg-white/15 border border-white/25 rounded-2xl p-4 text-center shrink-0">
+            <div class="text-xs uppercase text-emerald-100 font-semibold">Mon Compteur Semaine</div>
+            <div id="weeklyProblemCounterBig" class="text-3xl font-bold text-amber-300 my-1">0 / 10</div>
+            <button onclick="resetWeeklyProblems()" class="text-[11px] underline text-emerald-100 hover:text-white">Nouvelle semaine (remise à 0)</button>
+          </div>
+        </div>
+
+        <div id="problemsListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- SECTION ÉLÈVE C : CAHIER DE CLASSE & CARNET DE LECTURE    -->
+      <!-- ========================================================= -->
+      <div id="studentSectionHomework" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Cahier des travaux de classe -->
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-lg font-bold text-slate-900">📓 Mon Journal des Travaux de Classe</h3>
+                <p class="text-xs text-slate-500">Note tes exercices faits en classe ou à la maison pour les faire signer par tes parents.</p>
+              </div>
+              <button onclick="openModal('modalAddHomework')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shrink-0">
+                <i data-lucide="plus" class="w-4 h-4"></i> Noter un travail
+              </button>
+            </div>
+            <div id="homeworkListStudent" class="space-y-3"></div>
+          </div>
+
+          <!-- Carnet de lecture officiel (7 œuvres / an) & Chant/Musique -->
+          <div class="space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900">📚 Mon Carnet de Lecture Littéraire</h3>
+                  <p class="text-xs text-slate-500">Objectif officiel : <strong>5 livres jeunesse + 2 patrimoine en CM1</strong> • <strong>4 jeunesse + 3 patrimoine en CM2</strong>.</p>
+                </div>
+                <button onclick="openModal('modalAddBook')" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shrink-0">
+                  <i data-lucide="book-plus" class="w-4 h-4"></i> Ajouter un livre
+                </button>
+              </div>
+              <div id="readingListContainer" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-3">
+              <h3 class="text-base font-bold text-slate-900">🎵 Mes Chants (4/an) & Œuvres Artistiques Analysées (6/an)</h3>
+              <div id="artMusicChecklist" class="space-y-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================= -->
+      <!-- SECTION ÉLÈVE D : MON BILAN, SOCLE COMMUN & REPÈRES       -->
+      <!-- ========================================================= -->
+      <div id="studentSectionBilan" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="award" class="w-5 h-5 text-indigo-600"></i>
+              Ma Maîtrise des 5 Domaines du Socle Commun
+            </h3>
+            <div id="socleDomainsProgress" class="space-y-3"></div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+              Évaluations Nationales « Repères CM1 & CM2 »
+            </h3>
+            <p class="text-xs text-slate-500">Vérifie avec tes parents ou ton enseignant les attendus clés de début et de fin d'année :</p>
+            <div id="reperesChecklistContainer" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 2. ESPACE PARENT (ACCÈS SÉCURISÉ EXCLUSIF PAR ENFANT)     -->
+    <!-- ========================================================= -->
+    <section id="viewParent" class="hidden space-y-6">
+      <div id="parentLoginCard" class="max-w-md mx-auto bg-white rounded-3xl shadow-md border border-slate-200 p-6 mt-8">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-4">
+          <i data-lucide="key-round" class="w-6 h-6"></i>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">Portail Parent – Suivi Exclusif de votre Enfant</h2>
+        <p class="text-xs text-slate-500 mt-1">
+          Entrez le code personnel de votre enfant pour consulter ses notes d'évaluation, valider ses compétences et signer son cahier de classe.
+        </p>
+        <div class="mt-4 space-y-3">
+          <input type="text" id="parentCodeInput" placeholder="Ex: PAR-AMINATA" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 font-mono text-sm uppercase focus:ring-2 focus:ring-indigo-500" />
+          <p id="parentLoginError" class="text-xs text-red-600 hidden">Code introuvable. Cliquez sur l'un des codes de démonstration ci-dessous ou vérifiez auprès de l'enseignant.</p>
+          <button onclick="loginParent()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm shadow">
+            Accéder au dossier de mon enfant
+          </button>
+        </div>
+        <div class="mt-5 pt-4 border-t border-slate-100">
+          <p class="text-xs font-semibold text-slate-500 mb-2">Codes Parents configurés (cliquez pour tester) :</p>
+          <div id="demoParentCodesList" class="flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- Tableau de bord Parent connecté -->
+      <div id="parentDashboard" class="hidden space-y-6">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Espace Parent Authentifié</span>
+            <h2 id="parentChildTitle" class="text-2xl font-bold text-slate-900 mt-1">Suivi de l'élève</h2>
+            <p class="text-xs text-slate-500">Suivi complet des leçons, exercices, évaluations sur 20 et travaux de classe.</p>
+          </div>
+          <button onclick="logoutParent()" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion Parent
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-lg font-bold text-slate-900">Progression par Matière & Notes d'Évaluation</h3>
+            <div id="parentSubjectBreakdown" class="space-y-3"></div>
+          </div>
+
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="text-lg font-bold text-slate-900">Mot d'encouragement à mon enfant</h3>
+            <textarea id="parentMessageInput" rows="3" class="w-full rounded-xl border border-slate-300 p-3 text-sm"></textarea>
+            <button onclick="saveParentMessage()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm">
+              Mettre à jour le message d'encouragement
+            </button>
+
+            <div class="border-t border-slate-200 pt-4">
+              <h4 class="text-sm font-bold text-slate-800 mb-2">Travaux de classe à signer</h4>
+              <div id="parentHomeworkToSign" class="space-y-2.5"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+          <h3 class="text-lg font-bold text-slate-900">Co-validation des Compétences du Programme Officiel (CM1 / CM2)</h3>
+          <p class="text-xs text-slate-500">Cochez les compétences vérifiées à la maison lors des révisions avec votre enfant :</p>
+          <div id="parentCompetenciesList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 3. ESPACE ENSEIGNANT / ADMINISTRATEUR                     -->
+    <!-- ========================================================= -->
+    <section id="viewAdmin" class="hidden space-y-6">
+      <div id="adminLoginCard" class="max-w-md mx-auto bg-white rounded-3xl shadow-md border border-slate-200 p-6 mt-8">
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mb-4">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">Administration Enseignant / Coordonnateur</h2>
+        <p class="text-xs text-slate-500 mt-1">Gérez vos 5 à 10+ élèves, attribuez les codes parents et suivez les évaluations.</p>
+        <div class="mt-4 space-y-3">
+          <input type="password" id="adminPassInput" value="prof2026" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm" />
+          <p class="text-[11px] text-slate-400">Mot de passe par défaut : <code>prof2026</code></p>
+          <button onclick="loginAdmin()" class="w-full py-2.5 bg-indigo-950 hover:bg-indigo-900 text-white font-bold rounded-xl text-sm">
+            Accéder au pilotage de la classe
+          </button>
+        </div>
+      </div>
+
+      <div id="adminDashboard" class="hidden space-y-6">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Tableau de Bord Enseignant (CM1 & CM2)</h2>
+            <p class="text-xs text-slate-500">Suivi individuel, codes parents exclusifs et sauvegarde complète.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="openModal('modalAddStudent')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
+              <i data-lucide="user-plus" class="w-4 h-4"></i> Ajouter un Élève
+            </button>
+            <button onclick="exportAllDataJSON()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
+              <i data-lucide="download" class="w-4 h-4"></i> Exporter Sauvegarde JSON
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900">Élèves inscrits & Codes d'accès Parents</h3>
+            <span id="adminStudentCountBadge" class="text-xs font-bold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full"></span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-slate-50 text-slate-500 text-xs uppercase">
+                  <th class="py-3 px-4">Élève</th>
+                  <th class="py-3 px-4">Niveau</th>
+                  <th class="py-3 px-4">Code Parent Exclusif</th>
+                  <th class="py-3 px-4">XP</th>
+                  <th class="py-3 px-4">Compétences</th>
+                  <th class="py-3 px-4">Évaluations réussies</th>
+                  <th class="py-3 px-4">Problèmes / Sem.</th>
+                  <th class="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminStudentsTableBody" class="divide-y divide-slate-200"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- MODALES (DEVOIRS, LIVRES, ÉLÈVES, GUIDE DÉBUTANT)         -->
+  <!-- ========================================================= -->
+  <div id="modalAddHomework" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-lg font-bold text-slate-900">Noter un Travail de Classe ou Devoir</h3>
+        <button onclick="closeModal('modalAddHomework')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Matière</label>
+          <select id="hwSubject" class="w-full rounded-xl border border-slate-300 px-3 py-2">
+            <option value="Français">Français</option>
+            <option value="Mathématiques">Mathématiques</option>
+            <option value="Sciences et technologie">Sciences et technologie</option>
+            <option value="Histoire-Géographie">Histoire-Géographie</option>
+            <option value="EMC & EVAR">EMC & EVAR</option>
+            <option value="Langues vivantes">Langues vivantes</option>
+            <option value="Arts & Musique">Arts & Musique</option>
+            <option value="EPS">EPS</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Travail réalisé</label>
+          <input type="text" id="hwTitle" placeholder="Ex: Dictée préparée n°4 / Exercices cahier du jour" class="w-full rounded-xl border border-slate-300 px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Ce que j'ai appris ou réussi</label>
+          <textarea id="hwNotes" rows="3" placeholder="Ex: J'ai bien accordé tous les adjectifs dans le groupe nominal." class="w-full rounded-xl border border-slate-300 px-3 py-2"></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modalAddHomework')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Annuler</button>
+        <button onclick="saveHomeworkEntry()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">Enregistrer (+15 XP)</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddBook" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-lg font-bold text-slate-900">Ajouter un livre à mon Carnet de Lecture</h3>
+        <button onclick="closeModal('modalAddBook')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Titre et Auteur</label>
+          <input type="text" id="bookTitleInput" placeholder="Ex: L'Odyssée d'Homère / Le Petit Prince" class="w-full rounded-xl border border-slate-300 px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Catégorie officielle</label>
+          <select id="bookCategoryInput" class="w-full rounded-xl border border-slate-300 px-3 py-2">
+            <option value="Littérature de jeunesse">Ouvrage de littérature de jeunesse</option>
+            <option value="Œuvre du patrimoine">Œuvre du patrimoine</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Thème du programme</label>
+          <select id="bookThemeInput" class="w-full rounded-xl border border-slate-300 px-3 py-2">
+            <option value="Héros / héroïnes et personnages">Héros / héroïnes et personnages</option>
+            <option value="La morale en questions">La morale en questions</option>
+            <option value="Se confronter au merveilleux, à l'étrange">Se confronter au merveilleux, à l'étrange</option>
+            <option value="Vivre des aventures">Vivre des aventures</option>
+            <option value="Imaginer, dire et célébrer le monde">Imaginer, dire et célébrer le monde</option>
+            <option value="Se découvrir, s'affirmer dans le rapport aux autres">Se découvrir, s'affirmer dans le rapport aux autres</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Ce que j'ai retenu de cette lecture</label>
+          <textarea id="bookSummaryInput" rows="2" class="w-full rounded-xl border border-slate-300 px-3 py-2"></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modalAddBook')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Annuler</button>
+        <button onclick="saveBookEntry()" class="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold">Ajouter (+25 XP)</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddStudent" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-lg font-bold text-slate-900">Ajouter un Élève (CM1 ou CM2)</h3>
+        <button onclick="closeModal('modalAddStudent')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Prénom de l'élève</label>
+          <input type="text" id="newStudentName" placeholder="Ex: Sékou" class="w-full rounded-xl border border-slate-300 px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Classe</label>
+          <select id="newStudentLevel" class="w-full rounded-xl border border-slate-300 px-3 py-2">
+            <option value="CM1">CM1</option>
+            <option value="CM2">CM2</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Code Parent Exclusif</label>
+          <input type="text" id="newStudentParentCode" placeholder="Ex: PAR-SEKOU" class="w-full rounded-xl border border-slate-300 px-3 py-2 font-mono uppercase" />
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modalAddStudent')" class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold">Annuler</button>
+        <button onclick="createNewStudent()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">Inscrire l'élève</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDE DÉBUTANT MISE EN LIGNE & CLOUD -->
+  <div id="modalBeginnerGuide" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+      <div class="flex items-start justify-between border-b border-slate-200 pb-3">
+        <div>
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Guide Pas à Pas – Spécial Vrai Débutant</span>
+          <h3 class="text-xl font-bold text-slate-900 mt-1">Comment héberger et synchroniser l'application en ligne gratuitement ?</h3>
+        </div>
+        <button onclick="closeModal('modalBeginnerGuide')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      <div class="space-y-4 text-xs md:text-sm text-slate-700 leading-relaxed">
+        <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200">
+          <h4 class="font-bold text-indigo-950">1. Enregistrer le fichier sur votre ordinateur</h4>
+          <p class="mt-1">Enregistrez ce code sous le nom <code>index.html</code> dans un dossier sur votre ordinateur. Double-cliquez dessus pour l'utiliser immédiatement.</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+          <h4 class="font-bold text-emerald-950">2. Publier en ligne gratuitement en 30 secondes (Netlify Drop)</h4>
+          <p class="mt-1">Ouvrez <a href="https://app.netlify.com/drop" target="_blank" class="underline font-bold">app.netlify.com/drop</a> et glissez-y votre dossier contenant <code>index.html</code>. Vous obtenez immédiatement un lien internet à partager aux parents et aux enfants sur tablette, téléphone ou PC.</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+          <h4 class="font-bold text-amber-950">3. Synchronisation Cloud multi-appareils (Firebase Realtime Database)</h4>
+          <p>Créez un projet gratuit sur <a href="https://console.firebase.google.com/" target="_blank" class="underline font-bold">console.firebase.google.com</a> &rarr; <em>Realtime Database</em> (en mode test) et collez l'URL ci-dessous :</p>
+          <div class="flex flex-col sm:flex-row gap-2 pt-1">
+            <input type="text" id="firebaseUrlInput" placeholder="https://votre-projet-default-rtdb.firebaseio.com" class="flex-1 rounded-xl border border-amber-300 px-3 py-2 text-xs font-mono bg-white" />
+            <button onclick="saveFirebaseConfig()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl">Connecter le Cloud</button>
+          </div>
+          <p id="firebaseStatusMsg" class="text-xs font-bold text-amber-900"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SCRIPT COMPLET : CONTENU DÉTAILLÉ ILLUSTRÉ & LOGIQUE      -->
+  <!-- ========================================================= -->
+  <script>
+    // -------------------------------------------------------------
+    // 1. MÉTADONNÉES VISUELLES DES 8 GRANDES MATIÈRES
+    // -------------------------------------------------------------
+    const SUBJECTS_META = [
+      { id: 'Français', label: 'Français', icon: 'book-type', color: 'bg-blue-600', light: 'bg-blue-50 text-blue-900 border-blue-200', hours: '8h / sem.' },
+      { id: 'Mathématiques', label: 'Mathématiques', icon: 'sigma', color: 'bg-amber-500', light: 'bg-amber-50 text-amber-900 border-amber-200', hours: '5h / sem.' },
+      { id: 'Sciences et technologie', label: 'Sciences & Tech', icon: 'flask-conical', color: 'bg-emerald-600', light: 'bg-emerald-50 text-emerald-900 border-emerald-200', hours: '2h / sem.' },
+      { id: 'Histoire-Géographie', label: 'Histoire-Géo', icon: 'globe-2', color: 'bg-purple-600', light: 'bg-purple-50 text-purple-900 border-purple-200', hours: '2h30 / sem.' },
+      { id: 'EMC & EVAR', label: 'EMC & EVAR', icon: 'scale', color: 'bg-teal-600', light: 'bg-teal-50 text-teal-900 border-teal-200', hours: 'Citoyenneté' },
+      { id: 'Langues vivantes', label: 'Langues (CECRL)', icon: 'languages', color: 'bg-rose-600', light: 'bg-rose-50 text-rose-900 border-rose-200', hours: '1h30 / sem.' },
+      { id: 'Arts & Musique', label: 'Arts & Musique', icon: 'palette', color: 'bg-pink-600', light: 'bg-pink-50 text-pink-900 border-pink-200', hours: '2h / sem.' },
+      { id: 'EPS', label: 'EPS & Sport', icon: 'trophy', color: 'bg-cyan-600', light: 'bg-cyan-50 text-cyan-900 border-cyan-200', hours: '3h / sem.' }
+    ];
+
+    // -------------------------------------------------------------
+    // 2. FONCTION UTILITAIRE POUR LES AIDES CACHÉES (« COUP DE POUCE »)
+    // -------------------------------------------------------------
+    function toggleHiddenHint(hintId) {
+      const el = document.getElementById(hintId);
+      if (!el) return;
+      el.classList.toggle('hidden');
+    }
+
+    // -------------------------------------------------------------
+    // 3. COURS DÉTAILLÉS, ILLUSTRÉS, EXERCICES, QUIZ & ÉVALUATIONS
+    // -------------------------------------------------------------
+    const INITIAL_CURRICULUM = [
+      // ============================================================
+      // FRANÇAIS CM1 (BO n° 16 du 17 avril 2025)
+      // ============================================================
+      {
+        id: 'fr-cm1-gram',
+        level: 'CM1',
+        subject: 'Français',
+        boRef: 'BO n° 16 du 17 avril 2025',
+        socleDomain: 1,
+        title: 'Grammaire & Orthographe : Classes de mots et Accords dans le Groupe Nominal',
+        summary: 'Identifier la nature des mots (déterminant, nom, adjectif, verbe, pronom, adverbe) et réaliser sans erreur la chaîne d\'accords en genre et en nombre dans le groupe nominal et avec le verbe.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200">
+              <h4 class="font-bold text-blue-950 text-base mb-1">🎯 L'essentiel à comprendre</h4>
+              <p>Dans une phrase, chaque mot appartient à une <strong>classe grammaticale</strong> (sa « carte d'identité »). Autour du <strong>nom noyau</strong>, le déterminant et les adjectifs qualificatifs forment une véritable <strong>chaîne d'accords</strong> : ils prennent tous le même <strong>genre</strong> (masculin ou féminin) et le même <strong>nombre</strong> (singulier ou pluriel).</p>
+            </div>
+
+            <!-- Illustration visuelle de la chaîne d'accords -->
+            <div class="p-5 rounded-2xl bg-white border-2 border-indigo-100 shadow-sm space-y-3">
+              <div class="text-xs font-bold uppercase text-indigo-600 tracking-wider">🔍 Illustration Interactive : La Chaîne d'Accords du Groupe Nominal</div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                  <div class="text-xs font-bold text-amber-800">DÉTERMINANT</div>
+                  <div class="text-xl font-bold text-slate-900 my-1">Les <span class="text-red-600 underline">s</span></div>
+                  <div class="text-[11px] text-slate-500">Annonce le pluriel</div>
+                </div>
+                <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+                  <div class="text-xs font-bold text-indigo-800">NOM NOYAU (Chef du groupe)</div>
+                  <div class="text-xl font-bold text-slate-900 my-1">petite<span class="text-red-600 underline">s</span> rivière<span class="text-red-600 underline">s</span></div>
+                  <div class="text-[11px] text-slate-500">Féminin Pluriel</div>
+                </div>
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                  <div class="text-xs font-bold text-emerald-800">ADJECTIF QUALIFICATIF</div>
+                  <div class="text-xl font-bold text-slate-900 my-1">calme<span class="text-red-600 underline">s</span></div>
+                  <div class="text-[11px] text-slate-500">S'accorde avec « rivières » (+s)</div>
+                </div>
+              </div>
+              <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl">
+                💡 <strong>Astuce d'écoute :</strong> Même quand on n'entend pas la lettre finale à l'oral (<em>« calme<u>s</u> »</em>), il faut regarder le déterminant (<em>« Les »</em>) et le nom (<em>« rivières »</em>) pour penser à écrire le <strong>-s</strong> ou le <strong>-x</strong> du pluriel !
+              </p>
+            </div>
+
+            <!-- Tableau des classes de mots CM1 -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs border-collapse rounded-xl overflow-hidden">
+                <thead>
+                  <tr class="bg-slate-800 text-white">
+                    <th class="p-2.5 text-left">Classe de mot</th>
+                    <th class="p-2.5 text-left">Rôle dans la phrase</th>
+                    <th class="p-2.5 text-left">Exemples CM1</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                  <tr><td class="p-2.5 font-bold">Nom</td><td class="p-2.5">Désigne un être, une chose, une idée</td><td class="p-2.5">élève, cahier, liberté, France</td></tr>
+                  <tr><td class="p-2.5 font-bold">Déterminant</td><td class="p-2.5">Précède le nom et indique son genre/nombre</td><td class="p-2.5">le, la, les, un, cette, mon, plusieurs</td></tr>
+                  <tr><td class="p-2.5 font-bold">Adjectif</td><td class="p-2.5">Précise comment est le nom</td><td class="p-2.5">grand, curieuse, attentifs, bleues</td></tr>
+                  <tr><td class="p-2.5 font-bold">Verbe</td><td class="p-2.5">Indique l'action ou l'état (se conjugue)</td><td class="p-2.5">chanter, prennent, sommes, réfléchit</td></tr>
+                  <tr><td class="p-2.5 font-bold">Mot invariable</td><td class="p-2.5">Ne change jamais d'orthographe (adverbe, préposition...)</td><td class="p-2.5">toujours, souvent, dans, avec, mais</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-fr1-1',
+            instruction: 'Complète le groupe nominal au féminin pluriel : « Des histoire... passionnante... » (Écris les deux mots complets séparés par un espace).',
+            expected: 'histoires passionnantes',
+            hint: 'Le déterminant « Des » est au pluriel et le nom « histoire » est féminin : ajoute un -s au nom et un -s à l\'adjectif.'
+          },
+          {
+            id: 'ex-fr1-2',
+            instruction: 'Accorde l\'adjectif entre parenthèses : « Les (beau) oiseaux chantent dans l\'arbre. » (Écris uniquement l\'adjectif accordé).',
+            expected: 'beaux',
+            hint: 'Au masculin pluriel, les adjectifs en -eau prennent un -x à la fin.'
+          },
+          {
+            id: 'ex-fr1-3',
+            instruction: 'Trouve le verbe conjugué correctement avec le sujet : « Les joueurs de l\'équipe (écoute / écoutent) l\'arbitre. »',
+            expected: 'écoutent',
+            hint: 'Le noyau du sujet est « Les joueurs » (3e personne du pluriel = ils). Le verbe prend donc la terminaison -ent.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Dans la phrase « Ces grands arbres anciens protègent la forêt », quel est le nom noyau du groupe sujet ?',
+            options: ['arbres', 'grands', 'anciens', 'Ces'],
+            correct: 0,
+            hint: 'Cherche le mot qui désigne la chose principale dont on parle ; « grands » et « anciens » sont des adjectifs qui le décrivent.',
+            explain: '« arbres » est le nom noyau ; « Ces » est le déterminant, « grands » et « anciens » sont deux adjectifs qualificatifs.'
+          },
+          {
+            q: 'Quel mot de cette liste est un adverbe (mot invariable qui ne change jamais) ?',
+            options: ['Souvent', 'Joyeux', 'Chanter', 'Montagne'],
+            correct: 0,
+            hint: 'Essaie de mettre chaque mot au pluriel : celui qui ne peut jamais prendre de -s ou changer de forme est l\'adverbe.',
+            explain: '« Souvent » est un adverbe invariable, son orthographe reste toujours identique.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/3 : Choisis le groupe nominal où tous les accords sont exacts :',
+            options: ['Des nouvelles chaussures blanches', 'Des nouvelle chaussures blanche', 'Des nouvelles chaussure blanches', 'De nouveaux chaussures blanches'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/3 : Dans « Au loin brillent les étoiles », quel est le sujet du verbe « brillent » ?',
+            options: ['les étoiles (sujet inversé placé après le verbe)', 'Au loin', 'brillent', 'il n\'y a pas de sujet'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 3/3 : Quelle est la classe grammaticale du mot souligné dans « <u>Notre</u> école organise une fête » ?',
+            options: ['Déterminant possessif', 'Adjectif qualificatif', 'Pronom personnel', 'Préposition'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-fr1-1', text: 'Identifier et différencier nom, verbe, adjectif, déterminant, pronom et mots invariables' },
+          { id: 'c-fr1-2', text: 'Réaliser la chaîne d\'accords en genre et en nombre dans le groupe nominal' },
+          { id: 'c-fr1-3', text: 'Identifier le sujet (même inversé) et accorder le verbe conjugué' }
+        ]
+      },
+
+      {
+        id: 'fr-cm1-conj',
+        level: 'CM1',
+        subject: 'Français',
+        boRef: 'BO n° 16 du 17 avril 2025 – Repères CM1',
+        socleDomain: 1,
+        title: 'Conjugaison CM1 : Présent, Imparfait, Futur, Passé Composé & Verbes du 3e groupe',
+        summary: 'Conjuguer être, avoir, les verbes du 1er groupe et les 8 verbes fréquents du 3e groupe (faire, aller, dire, venir, pouvoir, voir, vouloir, prendre) aux quatre temps fondamentaux du CM1.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200">
+              <h4 class="font-bold text-indigo-950 text-base mb-1">🕰️ Les 4 temps incontournables du CM1</h4>
+              <p>En CM1, tu dois connaître par cœur les terminaisons régulières et les <strong>8 verbes fréquents du 3e groupe</strong> : <em>faire, aller, dire, venir, pouvoir, voir, vouloir, prendre</em>.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-4 rounded-2xl bg-white border border-slate-200">
+                <div class="font-bold text-indigo-800 text-sm mb-1">1. L'Imparfait (terminaisons identiques pour TOUS les verbes !)</div>
+                <p class="text-slate-600 mb-2">Radical du présent avec « nous » + <strong>-ais, -ais, -ait, -ions, -iez, -aient</strong>.</p>
+                <div class="bg-slate-50 p-2.5 rounded-xl font-mono">
+                  Prendre &rarr; nous pren-ons &rarr; je <strong>prenais</strong>, ils <strong>prenaient</strong><br>
+                  Faire &rarr; nous fais-ons &rarr; je <strong>faisais</strong> (prononcé "fe-sais")<br>
+                  Voir &rarr; nous voy-ons &rarr; nous <strong>voyions</strong> (y + i !)
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-white border border-slate-200">
+                <div class="font-bold text-emerald-800 text-sm mb-1">2. Le Futur (terminaisons : -ai, -as, -a, -ons, -ez, -ont)</div>
+                <p class="text-slate-600 mb-2">Attention aux radicaux particuliers du 3e groupe qui gardent toujours le <strong>-r-</strong> du futur :</p>
+                <div class="bg-slate-50 p-2.5 rounded-xl font-mono">
+                  Aller &rarr; j'<strong>irai</strong>, tu iras | Faire &rarr; je <strong>ferai</strong><br>
+                  Venir &rarr; je <strong>viendrai</strong> | Pouvoir &rarr; je <strong>pourrai</strong> (2 r)<br>
+                  Voir &rarr; je <strong>verrai</strong> (2 r) | Vouloir &rarr; je <strong>voudrai</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-fr1-c1',
+            instruction: 'Conjugue le verbe « faire » à l\'imparfait avec « nous » (écris uniquement le verbe conjugué) :',
+            expected: 'faisions',
+            hint: 'Le radical de faire à l\'imparfait est « fais- » + la terminaison « -ions ».'
+          },
+          {
+            id: 'ex-fr1-c2',
+            instruction: 'Conjugue le verbe « pouvoir » au futur avec « ils » (écris uniquement le verbe conjugué) :',
+            expected: 'pourront',
+            hint: 'Au futur, pouvoir et voir prennent deux -r- : « pourr- » + terminaison « -ont » avec ils.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Quelle est la forme exacte du verbe « dire » au présent avec « vous » ?',
+            options: ['Vous dites', 'Vous disez', 'Vous diriez', 'Vous disiez'],
+            correct: 0,
+            hint: 'Comme « vous faites », le verbe dire a une forme particulière en -tes à la 2e personne du pluriel au présent.',
+            explain: 'Au présent de l\'indicatif, on dit « vous dites » et « vous faites ».'
+          },
+          {
+            q: 'Au passé composé, comment s\'écrit « Elles (partir) tôt » ?',
+            options: ['Elles sont parties', 'Elles ont parti', 'Elles sont partis', 'Elles étaient parties'],
+            correct: 0,
+            hint: 'Le verbe partir se conjugue avec l\'auxiliaire être au passé composé : le participe passé s\'accorde avec « Elles » (féminin pluriel).',
+            explain: 'Avec l\'auxiliaire être (« sont »), le participe passé « parties » prend -e (féminin) et -s (pluriel).'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/3 : Choisis la bonne conjugaison de « venir » au futur avec « tu » :',
+            options: ['Tu viendras', 'Tu veniras', 'Tu viendra', 'Tu viendrais'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/3 : À quel temps est conjuguée la phrase « Nous avons pris le train » ?',
+            options: ['Passé composé', 'Imparfait', 'Futur simple', 'Présent'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 3/3 : Quelle est la terminaison de TOUS les verbes à l\'imparfait avec « ils / elles » ?',
+            options: ['-aient', '-ont', '-ent', '-irent'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-fr1-5', text: 'Conjuguer être, avoir et les verbes du 1er groupe au présent, imparfait, futur et passé composé' },
+          { id: 'c-fr1-6', text: 'Maîtriser les 8 verbes fréquents du 3e groupe (faire, aller, dire, venir, pouvoir, voir, vouloir, prendre)' },
+          { id: 'c-fr1-7', text: 'Lire un texte à voix haute avec fluidité et comprendre des textes littéraires et composites' }
+        ]
+      },
+
+      // ============================================================
+      // FRANÇAIS CM2 (BO n° 16 du 17 avril 2025)
+      // ============================================================
+      {
+        id: 'fr-cm2-synt',
+        level: 'CM2',
+        subject: 'Français',
+        boRef: 'BO n° 16 du 17 avril 2025 – Repères CM2',
+        socleDomain: 1,
+        title: 'Syntaxe CM2 : Phrase Complexe, Participes Passés, Implicites & Écrits Argumentatifs',
+        summary: 'Se repérer dans la phrase complexe (plusieurs verbes conjugués / propositions), maîtriser les accords du participe passé, repérer l\'implicite et le point de vue du narrateur, et présenter un propos argumenté.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200">
+              <h4 class="font-bold text-purple-950 text-base mb-1">🏗️ Phrase simple vs Phrase complexe (CM2)</h4>
+              <p>Pour savoir si une phrase est simple ou complexe, <strong>compte les verbes conjugués</strong> :</p>
+              <ul class="list-disc list-inside mt-2 space-y-1 text-xs">
+                <li><strong>Phrase simple (1 seul verbe conjugué) :</strong> <em>Les élèves <u>préparent</u> leur exposé avec soin.</em></li>
+                <li><strong>Phrase complexe (2 verbes conjugués ou plus = plusieurs propositions) :</strong> <em>Les élèves <u>préparent</u> leur exposé <strong>et</strong> ils <u>présentent</u> une affiche à la classe.</em></li>
+              </ul>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+              <div class="font-bold text-indigo-900">⚖️ Règle d'or des accords du Participe Passé au Cycle 3</div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                  <strong>Avec l'auxiliaire ÊTRE :</strong><br>
+                  On accorde <strong>TOUJOURS</strong> le participe passé en genre et en nombre avec le <strong>sujet</strong>.<br>
+                  <em>Ex : Les filles sont <u>arrivées</u>.</em>
+                </div>
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                  <strong>Avec l'auxiliaire AVOIR :</strong><br>
+                  Le participe passé <strong>ne s'accorde JAMAIS avec le sujet</strong> !<br>
+                  <em>Ex : Les filles ont <u>préparé</u> (é) leurs sacs.</em>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-fr2-1',
+            instruction: 'Accorde correctement le participe passé : « Les voyageuses sont (revenir) hier soir. » (Écris uniquement le participe passé accordé).',
+            expected: 'revenues',
+            hint: 'Le verbe est conjugué avec l\'auxiliaire être (« sont »). Le sujet « Les voyageuses » est au féminin pluriel (+es).'
+          },
+          {
+            id: 'ex-fr2-2',
+            instruction: 'Écris le participe passé de « visiter » : « Les élèves ont (visiter) le musée. »',
+            expected: 'visité',
+            hint: 'Attention au piège ! Ici l\'auxiliaire est « ont » (avoir) : le participe passé ne s\'accorde pas avec le sujet « Les élèves ».'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Combien y a-t-il de propositions dans la phrase complexe : « Dès que la cloche sonne, les élèves rangent leurs affaires et sortent dans la cour » ?',
+            options: ['3 propositions (car il y a 3 verbes conjugués : sonne, rangent, sortent)', '1 seule proposition', '2 propositions', 'Aucune proposition'],
+            correct: 0,
+            hint: 'Compte le nombre de verbes conjugués dans la phrase : chaque verbe conjugué est le noyau d\'une proposition.',
+            explain: 'Il y a 3 verbes conjugués (« sonne », « rangent », « sortent »), donc 3 propositions.'
+          },
+          {
+            q: 'En lecture au CM2, qu\'appelle-t-on comprendre « l\'implicite » d\'un texte ?',
+            options: [
+              'Comprendre une information qui n\'est pas écrite mot à mot grâce aux indices du texte',
+              'Lire uniquement le titre du livre',
+              'Compter le nombre de pages',
+              'Recopier la première phrase'
+            ],
+            correct: 0,
+            hint: 'Par exemple, si le texte dit « Lucas ouvre son parapluie et enfile ses bottes », tu devines qu\'il pleut même si le mot pluie n\'est pas écrit.',
+            explain: 'L\'implicite repose sur la déduction du lecteur à partir des indices laissés par l\'auteur.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/3 : Quelle phrase est correctement accordée au passé composé ?',
+            options: ['Mes sœurs ont acheté des fleurs et sont rentrées à pied.', 'Mes sœurs ont achetées des fleurs et sont rentré à pied.', 'Mes sœurs ont achetés des fleurs.', 'Mes sœurs sont rentré à pied.'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/3 : Pour réussir un exposé oral au CM2 selon le programme officiel, il faut :',
+            options: ['S\'appuyer sur des notes ou un support (affiche, diaporama) en parlant distinctement à son auditoire', 'Lire une feuille entière les yeux baissés à toute vitesse', 'Ne préparer aucun plan', 'Parler en chuchotant'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 3/3 : Quel est le quota officiel de lectures littéraires en classe de CM2 ?',
+            options: ['Au moins 4 ouvrages de jeunesse et 3 œuvres du patrimoine (7 livres)', 'Uniquement des bandes dessinées', '1 livre par an', 'Aucun livre'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-fr2-1', text: 'Se repérer dans la phrase complexe et identifier les constituants syntaxiques' },
+          { id: 'c-fr2-2', text: 'Maîtriser les accords du participe passé (employé avec être et distinction avec avoir)' },
+          { id: 'c-fr2-3', text: 'Interpréter l\'implicite, identifier le narrateur et réaliser une présentation orale structurée' },
+          { id: 'c-fr2-4', text: 'Produire et réviser des textes variés (récits, textes explicatifs et argumentatifs)' }
+        ]
+      },
+
+      // ============================================================
+      // MATHÉMATIQUES CM1 (BO n° 16 du 17 avril 2025)
+      // ============================================================
+      {
+        id: 'ma-cm1-num',
+        level: 'CM1',
+        subject: 'Mathématiques',
+        boRef: 'BO n° 16 du 17 avril 2025',
+        socleDomain: 1,
+        title: 'Numération CM1 : Grands Nombres (999 999), Fractions (≤ 20) & Décimaux aux Centièmes',
+        summary: 'Lire, décomposer et encadrer les nombres jusqu\'à 999 999, manipuler les fractions simples (dénominateur ≤ 20) et passer des fractions décimales à l\'écriture à virgule jusqu\'aux centièmes (35,78 = 35 + 7/10 + 8/100).',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200">
+              <h4 class="font-bold text-amber-950 text-base mb-1">🔢 Du nombre entier aux nombres décimaux (CM1)</h4>
+              <p>En CM1, on partage l'unité en <strong>10 parts égales (les dixièmes : 1/10 = 0,1)</strong> puis en <strong>100 parts égales (les centièmes : 1/100 = 0,01)</strong>.</p>
+            </div>
+
+            <!-- Tableau de numération illustré -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-center text-xs border-collapse rounded-2xl overflow-hidden shadow-sm">
+                <thead>
+                  <tr class="bg-indigo-900 text-white">
+                    <th colspan="3" class="p-2 border-r border-indigo-700">Classe des Milliers</th>
+                    <th colspan="3" class="p-2 border-r-4 border-amber-400">Classe des Unités Simples</th>
+                    <th colspan="2" class="p-2 bg-emerald-800">Partie Décimale (après la virgule)</th>
+                  </tr>
+                  <tr class="bg-slate-100 text-slate-700 font-bold">
+                    <td class="p-2 border">Centaines de mille</td>
+                    <td class="p-2 border">Dizaines de mille</td>
+                    <td class="p-2 border">Unités de mille</td>
+                    <td class="p-2 border">Centaines</td>
+                    <td class="p-2 border">Dizaines</td>
+                    <td class="p-2 border border-r-4 border-r-amber-400">Unités</td>
+                    <td class="p-2 border bg-emerald-50 text-emerald-900">Dixièmes (1/10)</td>
+                    <td class="p-2 border bg-emerald-50 text-emerald-900">Centièmes (1/100)</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="bg-white text-base font-bold">
+                    <td class="p-2.5 border text-slate-300">0</td>
+                    <td class="p-2.5 border text-slate-300">0</td>
+                    <td class="p-2.5 border text-slate-300">0</td>
+                    <td class="p-2.5 border text-slate-300">0</td>
+                    <td class="p-2.5 border text-indigo-700">3</td>
+                    <td class="p-2.5 border border-r-4 border-r-amber-400 text-indigo-700">5 ,</td>
+                    <td class="p-2.5 border bg-emerald-50/50 text-emerald-700">7</td>
+                    <td class="p-2.5 border bg-emerald-50/50 text-emerald-700">8</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200">
+              📌 <strong>Exemple du programme officiel CM1 :</strong> <strong>35,78 = 35 + 7/10 + 8/100 = 35 + 78/100</strong>.
+              <br>Critères de divisibilité à connaître en CM1 : un nombre entier est divisible par <strong>2</strong> s'il finit par 0, 2, 4, 6, 8 ; par <strong>5</strong> s'il finit par 0 ou 5 ; par <strong>10</strong> s'il finit par 0.
+            </p>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-ma1-1',
+            instruction: 'Écris sous forme de nombre à virgule : 14 + 6/10 + 9/100 =',
+            expected: '14,69',
+            hint: '14 est la partie entière avant la virgule, 6 est le chiffre des dixièmes (1er chiffre après la virgule) et 9 est le chiffre des centièmes.'
+          },
+          {
+            id: 'ex-ma1-2',
+            instruction: 'Calcule la fraction unitaire d\'une grandeur : combien vaut un quart de 100 mètres (1/4 de 100) ? (Écris uniquement le nombre).',
+            expected: '25',
+            hint: 'Prendre un quart (1/4) de 100 revient à partager 100 en 4 parts égales : 100 ÷ 4.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Lequel de ces deux nombres décimaux est le plus grand : 12,7 ou 12,68 ?',
+            options: ['12,7 (car 7 dixièmes = 70 centièmes, ce qui est plus grand que 68 centièmes)', '12,68 car 68 est plus grand que 7', 'Ils sont égaux', 'On ne peut pas comparer'],
+            correct: 0,
+            hint: 'Compare d\'abord le chiffre des dixièmes juste après la virgule, ou ajoute un zéro inutile : 12,7 = 12,70.',
+            explain: '12,7 = 12,70. Comme 70 centièmes > 68 centièmes, on a bien 12,7 > 12,68.'
+          },
+          {
+            q: 'Quel nombre est à la fois divisible par 2, par 5 et par 10 ?',
+            options: ['450', '455', '452', '459'],
+            correct: 0,
+            hint: 'Un nombre divisible par 10 se termine obligatoirement par le chiffre 0.',
+            explain: 'Tout nombre entier qui se termine par 0 (comme 450) est un multiple de 10, donc aussi de 2 et de 5.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/3 : Comment s\'écrit en chiffres « quatre-cent-huit-mille-soixante-douze » ?',
+            options: ['408 072', '480 072', '408 720', '400 872'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/3 : Quelle fraction simple est égale à la somme : 3/8 + 2/8 ?',
+            options: ['5/8', '5/16', '6/8', '1/8'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 3/3 : Quel est l\'encadrement à l\'unité près du nombre décimal 8,45 ?',
+            options: ['Entre 8 et 9 (8 < 8,45 < 9)', 'Entre 8 et 8,4', 'Entre 84 et 85', 'Entre 7 et 8'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-ma1-1', text: 'Lire, écrire, comparer et encadrer les nombres entiers jusqu\'à 999 999 et utiliser les critères de divisibilité (2, 5, 10)' },
+          { id: 'c-ma1-2', text: 'Manipuler des fractions simples (dénominateur ≤ 20) et calculer une fraction unitaire d\'une quantité' },
+          { id: 'c-ma1-3', text: 'Passer des fractions décimales à l\'écriture à virgule jusqu\'aux centièmes et les comparer' },
+          { id: 'c-ma1-4', text: 'Résoudre des égalités à trous (algèbre), construire des figures planes, symétrie axiale et calculer des périmètres/aires en cm²' }
+        ]
+      },
+
+      // ============================================================
+      // MATHÉMATIQUES CM2 (BO n° 16 du 17 avril 2025)
+      // ============================================================
+      {
+        id: 'ma-cm2-num',
+        level: 'CM2',
+        subject: 'Mathématiques',
+        boRef: 'BO n° 16 du 17 avril 2025 (CM2 2026-2027)',
+        socleDomain: 4,
+        title: 'Mathématiques CM2 : Centaines de Millions, Décimaux aux Millièmes, Proportionnalité, Aires & Probabilités',
+        summary: 'Nombres jusqu\'à 999 999 999, diviseurs d\'un entier ≤ 30, fractions (dénominateur ≤ 60), décimaux jusqu\'aux millièmes (0,001), aires (cm², dm², m²), probabilités (« a chances sur b ») et proportionnalité.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200">
+              <h4 class="font-bold text-amber-950 text-base mb-1">🚀 Ce qui change et s'approfondit au CM2</h4>
+              <ul class="list-disc list-inside space-y-1 text-xs">
+                <li><strong>Grands nombres entiers :</strong> jusqu'aux centaines de millions (<strong>999 999 999</strong>) et recherche de tous les diviseurs d'un nombre $\le 30$.</li>
+                <li><strong>Nombres décimaux :</strong> jusqu'aux <strong>millièmes (1/1000 = 0,001)</strong>, soit 3 chiffres après la virgule.</li>
+                <li><strong>Aires et conversions :</strong> Aire du rectangle = $L \times l$ ; Aire du carré = $c \times c$. Attention : $1\text{ m}^2 = 100\text{ dm}^2 = 10\,000\text{ cm}^2$.</li>
+                <li><strong>Probabilités :</strong> on exprime désormais la probabilité sous la forme <strong>« $a$ chances sur $b$ »</strong>.</li>
+              </ul>
+            </div>
+
+            <!-- Illustration visuelle Proportionnalité & Schéma -->
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 space-y-2">
+              <div class="text-xs font-bold uppercase text-indigo-700">📊 Tableau de Proportionnalité (Passage par l'unité ou coefficient)</div>
+              <table class="w-full text-center text-xs border-collapse">
+                <tr class="bg-slate-100 font-bold">
+                  <td class="p-2 border">Nombre de cahiers</td>
+                  <td class="p-2 border">4</td>
+                  <td class="p-2 border text-indigo-700">8 (×2)</td>
+                  <td class="p-2 border text-emerald-700">12 (4 + 8 ou ×3)</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border font-bold bg-slate-50">Prix en Euros (€)</td>
+                  <td class="p-2 border">6 €</td>
+                  <td class="p-2 border font-bold text-indigo-700">12 €</td>
+                  <td class="p-2 border font-bold text-emerald-700">18 €</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-ma2-1',
+            instruction: 'Écris en écriture à virgule la fraction décimale : 7 + 4/10 + 5/1000 =',
+            expected: '7,405',
+            hint: 'Il n\'y a aucun centième : pense bien à placer un 0 au rang des centièmes entre le 4 (dixièmes) et le 5 (millièmes) !'
+          },
+          {
+            id: 'ex-ma2-2',
+            instruction: 'Calcule le produit d\'un entier par une fraction : combien vaut 3 × (2/5) ? (Écris sous la forme a/b).',
+            expected: '6/5',
+            hint: '3 fois 2 cinquièmes, c\'est (3 × 2) cinquièmes = 6/5.'
+          },
+          {
+            id: 'ex-ma2-3',
+            instruction: 'Un carré a un côté de 9 cm. Quelle est son aire en cm² ? (Écris uniquement le nombre).',
+            expected: '81',
+            hint: 'L\'aire d\'un carré se calcule en multipliant le côté par lui-même : 9 cm × 9 cm.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Dans une roue de loterie équilibrée comportant 8 secteurs numérotés de 1 à 8, quelle est la probabilité d\'obtenir un nombre pair ?',
+            options: ['4 chances sur 8 (soit 1 chance sur 2)', '2 chances sur 8', '8 chances sur 4', '1 chance sur 8'],
+            correct: 0,
+            hint: 'Compte combien il y a de nombres pairs entre 1 et 8 : ce sont 2, 4, 6 et 8.',
+            explain: 'Il y a 4 issues favorables (2, 4, 6, 8) sur 8 issues possibles au total, soit « 4 chances sur 8 ».'
+          },
+          {
+            q: 'Combien vaut 15,48 × 100 en calcul mental ?',
+            options: ['1 548', '154,8', '15,4800', '0,1548'],
+            correct: 0,
+            hint: 'Multiplier par 100 rend chaque chiffre 100 fois plus grand : les centièmes deviennent des unités.',
+            explain: 'En multipliant 15,48 par 100, la virgule se décale de 2 rangs vers la droite : 1 548.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/3 : Quels sont tous les diviseurs du nombre 12 ?',
+            options: ['1, 2, 3, 4, 6 et 12', '1, 2, 6 et 12 uniquement', '12, 24 et 36', '2, 3 et 4 uniquement'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/3 : Sur une carte à l\'échelle, 1 cm représente 5 km en réalité. Quelle distance réelle représentent 6 cm sur la carte ?',
+            options: ['30 km', '11 km', '6 km', '50 km'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 3/3 : Quel est le quotient décimal exact de la division 15 ÷ 4 ?',
+            options: ['3,75', '3,5', '3,25', '4,25'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-ma2-1', text: 'Maîtriser les entiers jusqu\'à 999 999 999, trouver les diviseurs d\'un entier ≤ 30 et manipuler les fractions (≤ 60)' },
+          { id: 'c-ma2-2', text: 'Comparer, intercaler et opérer sur les nombres décimaux jusqu\'aux millièmes (division à quotient décimal incluse)' },
+          { id: 'c-ma2-3', text: 'Calculer et convertir des aires (cm², dm², m²), construire des angles (90°, moitié d\'angle) et des patrons de solides' },
+          { id: 'c-ma2-4', text: 'Résoudre des problèmes de proportionnalité (échelles, recettes) et exprimer des probabilités (« a chances sur b »)' }
+        ]
+      },
+
+      // ============================================================
+      // SCIENCES & TECHNOLOGIE CM1 & CM2
+      // ============================================================
+      {
+        id: 'sc-cm1-mat',
+        level: 'CM1',
+        subject: 'Sciences et technologie',
+        boRef: 'Programme Sciences & Technologie Cycle 3 (CM1)',
+        socleDomain: 4,
+        title: 'Sciences CM1 : Mélanges, Ombres & Phases de la Lune, Cerveau, Écosystèmes & Objets Techniques',
+        summary: 'Séparer des mélanges (tamisage, décantation, filtration, dissolution), comprendre les ombres et le cycle de la Lune, connaître les fonctions du cerveau (mémoire, attention) et analyser un écosystème.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+                <h4 class="font-bold text-emerald-950 mb-1">🧪 1. Mélanges homogènes et hétérogènes</h4>
+                <p class="text-xs">
+                  • <strong>Mélange hétérogène :</strong> on distingue au moins deux constituants à l'œil nu (ex : eau + sable). On les sépare par <strong>décantation</strong> (laisser reposer au fond) ou <strong>filtration</strong> (passer dans un filtre).<br>
+                  • <strong>Mélange homogène :</strong> on ne distingue plus les constituants (ex : sel dissous dans l'eau = <strong>dissolution</strong>). Au-delà d'une certaine quantité, le sel ne se dissout plus : la solution est <strong>saturée</strong>.
+                </p>
+              </div>
+              <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200">
+                <h4 class="font-bold text-indigo-950 mb-1">🧠 2. Le Cerveau et les Apprentissages (CM1)</h4>
+                <p class="text-xs">
+                  Le <strong>cerveau</strong> est l'organe central qui reçoit les messages de nos 5 sens (vision, audition, toucher...), commande nos mouvements, gère nos émotions et notre <strong>mémoire</strong>.<br>
+                  Pour mieux mémoriser ses leçons : <strong>organiser les idées, répéter régulièrement, verbaliser à voix haute et bien dormir !</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-sc1-1',
+            instruction: 'Comment appelle-t-on un matériau qui ne laisse pas du tout passer la lumière et produit une ombre derrière lui ? (transparent, translucide ou opaque)',
+            expected: 'opaque',
+            hint: 'Un vitrage est transparent, du papier calque est translucide, mais un mur ou du bois bloque les rayons lumineux.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Comment qualifie-t-on un animal dont le petit se développe dans un œuf pondu à l\'extérieur du corps de la femelle (comme la poule ou la tortue) ?',
+            options: ['Ovipare', 'Vivipare', 'Herbivore', 'Minéral'],
+            correct: 0,
+            hint: 'En latin, « ovi » signifie l\'œuf.',
+            explain: 'Les animaux qui pondent des œufs sont ovipares, tandis que ceux dont l\'embryon se développe dans le ventre maternel sont vivipares.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/2 : Quand on mélange du sirop de menthe et de l\'eau et que le liquide devient uniforme, c\'est un mélange :',
+            options: ['Homogène', 'Hétérogène', 'Gazeux uniquement', 'Isolant'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/2 : Combien de temps dure environ un cycle complet des phases de la Lune (lunaison) ?',
+            options: ['Environ 29 jours (un mois lunaire)', 'Exactement 24 heures', '365 jours', '10 ans'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-sc1-1', text: 'Distinguer mélanges homogènes et hétérogènes et mettre en œuvre tamisage, décantation, filtration et dissolution' },
+          { id: 'c-sc1-2', text: 'Produire et expliquer des ombres (matériau opaque) et schématiser le cycle des phases de la Lune' },
+          { id: 'c-sc1-3', text: 'Utiliser une clé de détermination, comprendre les réseaux alimentaires et expliquer le rôle central du cerveau' }
+        ]
+      },
+
+      {
+        id: 'sc-cm2-mat',
+        level: 'CM2',
+        subject: 'Sciences et technologie',
+        boRef: 'BO n° 25 du 22 juin 2023 (CM2)',
+        socleDomain: 4,
+        title: 'Sciences CM2 : Changements d\'État, Conservation de la Masse, Électricité, Climat & Digestion',
+        summary: 'Nommer les changements d\'état (fusion, solidification, vaporisation, liquéfaction), vérifier la conservation de la masse, schématiser un circuit électrique à une boucle, comprendre le système digestif et programmer avec boucles/conditions.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <!-- Schéma des 4 changements d'état de l'eau -->
+            <div class="p-4 rounded-2xl bg-cyan-50 border border-cyan-200 space-y-2">
+              <h4 class="font-bold text-cyan-950 text-base">❄️💧☁️ Les 4 Changements d'État de la Matière (Réversibles & Conservation de la Masse)</h4>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-center">
+                <div class="p-2.5 bg-white rounded-xl border border-cyan-200">
+                  <strong>FUSION</strong><br>Solide &rarr; Liquide<br><span class="text-slate-500">(Glace qui fond à 0°C)</span>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-cyan-200">
+                  <strong>SOLIDIFICATION</strong><br>Liquide &rarr; Solide<br><span class="text-slate-500">(Eau qui gèle à 0°C)</span>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-cyan-200">
+                  <strong>VAPORISATION</strong><br>Liquide &rarr; Gaz<br><span class="text-slate-500">(Ébullition à 100°C / Évaporation)</span>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-cyan-200">
+                  <strong>LIQUÉFACTION</strong><br>Gaz &rarr; Liquide<br><span class="text-slate-500">(Buée sur une vitre froide)</span>
+                </div>
+              </div>
+              <p class="text-xs text-cyan-900 pt-1">
+                ⚖️ <strong>Loi fondamentale CM2 :</strong> Lors d'un changement d'état ou d'une dissolution, <strong>la masse se conserve toujours</strong> (100 g de glace donnent exactement 100 g d'eau liquide), même si le volume change !
+              </p>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-sc2-1',
+            instruction: 'Pour récupérer le sel dissous dans de l\'eau salée, on chauffe ou on laisse l\'eau se transformer en vapeur : quel changement d\'état utilise-t-on ? (évaporation / fusion / solidification)',
+            expected: 'évaporation',
+            hint: 'L\'eau liquide s\'échappe dans l\'air sous forme de gaz et laisse les cristaux de sel au fond du récipient.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Dans un circuit électrique simple à une boucle, quel matériau est un conducteur électrique permettant d\'allumer la lampe ?',
+            options: ['Un fil de cuivre (métal)', 'Un morceau de bois sec', 'Une règle en plastique', 'Un bout de carton'],
+            correct: 0,
+            hint: 'Les métaux (cuivre, fer, aluminium, or) laissent passer le courant électrique.',
+            explain: 'Les métaux comme le cuivre sont conducteurs, tandis que le plastique, le bois et le verre sont des isolants.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/2 : Quel phénomène astronomique explique l\'alternance des saisons sur la Terre au cours d\'une année ?',
+            options: ['La révolution de la Terre autour du Soleil en 365 jours un quart avec son axe incliné', 'La rotation de la Terre sur elle-même en 24 heures', 'Les nuages dans le ciel', 'Les éclipses de Lune'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/2 : Dans le corps humain, comment les nutriments issus de la digestion sont-ils transportés jusqu\'à tous les organes ?',
+            options: ['Par la circulation sanguine (le sang)', 'Par les os du squelette', 'Par les cheveux', 'Par les oreilles'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-sc2-1', text: 'Identifier fusion, solidification, vaporisation, liquéfaction et vérifier la conservation de la masse' },
+          { id: 'c-sc2-2', text: 'Réaliser et schématiser un circuit électrique normalisé à une boucle (conducteurs/isolants, sécurité)' },
+          { id: 'c-sc2-3', text: 'Expliquer les mouvements de la Terre, le changement climatique, le rôle de l\'appareil digestif et programmer un objet technique' }
+        ]
+      },
+
+      // ============================================================
+      // HISTOIRE-GÉOGRAPHIE CM1 & CM2
+      // ============================================================
+      {
+        id: 'hg-cm1-tot',
+        level: 'CM1',
+        subject: 'Histoire-Géographie',
+        boRef: 'BO n° 22 du 28 mai 2026 (Histoire-Géo CM1)',
+        socleDomain: 5,
+        title: 'Histoire-Géo CM1 : Avant la France, Temps des Rois, Révolution & Espaces de Vie / Consommation',
+        summary: 'Histoire CM1 : 1. Et avant la France ? (Gaulois, Gallo-romains, Clovis, Charlemagne) ; 2. Le temps des rois (Louis IX, François Ier, Henri IV, Louis XIV) ; 3. Révolution française (1789) et Empire. Géographie CM1 : Lieux où j\'habite, se loger/travailler en France, consommer en France.',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200 space-y-2">
+              <h4 class="font-bold text-purple-950 text-base">⏳ Frise Chronologique des 3 Grands Thèmes d'Histoire en CM1</h4>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="p-3 bg-white rounded-xl border border-purple-200">
+                  <strong class="text-purple-800">Thème 1 : Et avant la France ?</strong><br>
+                  • Celtes, Gaulois et conquête romaine (-52 : Alésia, civilisation gallo-romaine).<br>
+                  • Clovis (baptême vers 496, Mérovingiens) et <strong>Charlemagne</strong> (couronné empereur en <strong>800</strong>).
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-purple-200">
+                  <strong class="text-purple-800">Thème 2 : Le temps des rois</strong><br>
+                  • Construction du royaume avec Louis IX (Saint Louis), François Ier (Renaissance, 1515, ordonnance de Villers-Cotterêts 1539), Henri IV (Édit de Nantes 1598) et Louis XIV (monarchie absolue, Versailles).
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-purple-200">
+                  <strong class="text-purple-800">Thème 3 : Révolution & Empire</strong><br>
+                  • <strong>1789 :</strong> Révolution française, prise de la Bastille (14 juillet), Déclaration des droits de l'homme et du citoyen (26 août 1789).<br>
+                  • Napoléon Bonaparte (Premier Empire, Code civil 1804).
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-hg1-1',
+            instruction: 'En quelle année débute la Révolution française avec la prise de la Bastille et la Déclaration des droits de l\'homme et du citoyen ?',
+            expected: '1789',
+            hint: 'C\'est la date repère majeure de la fin du XVIIIe siècle.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'En Géographie CM1 (Thème 3 : « Consommer en France »), pourquoi doit-on traiter l\'eau captée dans la nature avant qu\'elle n\'arrive au robinet ?',
+            options: ['Pour la rendre potable et propre à la consommation humaine', 'Pour la rendre salée', 'Pour la transformer en pétrole', 'On ne la traite jamais'],
+            correct: 0,
+            hint: 'L\'eau des rivières ou des nappes phréatiques passe par une usine de potabilisation.',
+            explain: 'Le circuit de l\'eau comprend le captage, le traitement en station d\'eau potable, la distribution, puis l\'épuration des eaux usées.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/2 : Quel roi de la Renaissance est associé au château de Chambord, à Léonard de Vinci et à l\'ordonnance de Villers-Cotterêts (1539) ?',
+            options: ['François Ier', 'Clovis', 'Charlemagne', 'Napoléon Ier'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/2 : En géographie, passer du plan de son quartier à la carte de France puis au planisphère mondial, c\'est changer :',
+            options: ['D\'échelle géographique', 'De siècle historique', 'De saison', 'De langue vivante'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-hg1-1', text: 'Situer sur une frise les repères CM1 : Gaulois/Romains, Clovis, Charlemagne (800), Temps des rois, Révolution (1789) et Empire' },
+          { id: 'c-hg1-2', text: 'Décrire son lieu de vie à différentes échelles, les espaces français et les circuits de consommation (eau, énergie, aliments)' }
+        ]
+      },
+
+      {
+        id: 'hg-cm2-tot',
+        level: 'CM2',
+        subject: 'Histoire-Géographie',
+        boRef: 'BO n° 31 du 30 juillet 2020 (Histoire-Géo CM2)',
+        socleDomain: 5,
+        title: 'Histoire-Géo CM2 : République, Âge Industriel, Guerres Mondiales & UE • Mobilités, Internet & Écoquartiers',
+        summary: 'Histoire CM2 : 1. Temps de la République (1892, école de Jules Ferry) ; 2. Âge industriel (charbon, machine à vapeur, mine, usine, villes) ; 3. Guerres mondiales (1914-1918, 1939-1945) et construction européenne. Géographie CM2 : Se déplacer, Internet dans le monde, Mieux habiter (écoquartiers, recyclage).',
+        lessonHtml: `
+          <div class="space-y-4 text-sm leading-relaxed">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200 space-y-1.5">
+                <h4 class="font-bold text-purple-950 text-sm">🏛️ Repères d'Histoire CM2 (XIXe - XXe siècles)</h4>
+                <p>• <strong>IIIe République (dès 1870) :</strong> Lois de <strong>Jules Ferry (1881-1882)</strong> rendant l'école primaire gratuite, laïque et l'instruction obligatoire. Symboles républicains (Marianne, 14 juillet, Marseillaise, devise).</p>
+                <p>• <strong>L'Âge industriel :</strong> Machine à vapeur (charbon), puis pétrole et électricité. Essor du chemin de fer, travail des ouvriers à la mine et à l'usine, croissance des villes industrielles.</p>
+                <p>• <strong>XXe siècle :</strong> Première Guerre mondiale (<strong>1914-1918</strong>), Seconde Guerre mondiale (<strong>1939-1945</strong>), puis création de l'<strong>Union européenne</strong> (à partir de 1957, traité de Rome) pour garantir la paix durable.</p>
+              </div>
+              <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1.5">
+                <h4 class="font-bold text-emerald-950 text-sm">🌍 Repères de Géographie CM2</h4>
+                <p>• <strong>Se déplacer :</strong> Transports du quotidien et mobilités douces/collectives (tramway, train, vélo) pour limiter la pollution.</p>
+                <p>• <strong>Communiquer via Internet :</strong> Câbles sous-marins, satellites, centres de données (data centers), mais existence d'une <em>fracture numérique</em> (habitants inégalement connectés dans le monde).</p>
+                <p>• <strong>Mieux habiter :</strong> Végétaliser les villes, trier/recycler les déchets et aménager des <strong>écoquartiers</strong> économes en énergie.</p>
+              </div>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-hg2-1',
+            instruction: 'En quelle année se termine la Première Guerre mondiale avec l\'armistice du 11 novembre ? (1914 ou 1918)',
+            expected: '1918',
+            hint: 'La Première Guerre mondiale a duré de 1914 à 1918.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Par où passe l\'immense majorité des données d\'Internet lorsqu\'elles traversent les océans d\'un continent à l\'autre ?',
+            options: ['Par des câbles sous-marins en fibre optique posés au fond des océans', 'Par des avions de ligne', 'Par des pigeons voyageurs', 'Par les nuages de pluie'],
+            correct: 0,
+            hint: 'Ces câbles relient les continents sous l\'eau sur des milliers de kilomètres.',
+            explain: 'Plus de 98 % du trafic intercontinental d\'Internet circule dans des câbles sous-marins en fibre optique.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation 1/2 : Quelle source d\'énergie principale alimente les machines à vapeur et les locomotives au début de l\'âge industriel au XIXe siècle ?',
+            options: ['Le charbon (la houille)', 'L\'énergie nucléaire', 'Les panneaux solaires', 'L\'essence d\'avion'],
+            correct: 0
+          },
+          {
+            q: 'Évaluation 2/2 : Quel était l\'objectif premier des pays fondateurs de la construction européenne après 1945 ?',
+            options: ['Assurer une paix durable et la coopération entre les peuples européens après deux guerres mondiales', 'Supprimer toutes les écoles', 'Fermer toutes les frontières au commerce', 'Interdire les voyages'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-hg2-1', text: 'Expliquer l\'enracinement de la République (Jules Ferry), les mutations de l\'âge industriel, les deux guerres mondiales et l\'UE' },
+          { id: 'c-hg2-2', text: 'Analyser les mobilités durables, le réseau mondial d\'Internet (et ses inégalités) et l\'aménagement d\'un écoquartier' }
+        ]
+      },
+
+      // ============================================================
+      // EMC & EVAR, LANGUES, ARTS & EPS (CYCLE 3)
+      // ============================================================
+      {
+        id: 'emc-evar-c3',
+        level: 'CM2',
+        subject: 'EMC & EVAR',
+        boRef: 'EMC (BO 13 juin 2024) & EVAR (BO 6 février 2025)',
+        socleDomain: 3,
+        title: 'EMC & EVAR (CM1-CM2) : Valeurs de la République, Institutions, Émotions, Consentement & Cybercitoyenneté',
+        summary: 'Comprendre les valeurs républicaines (Liberté, Égalité, Fraternité, Laïcité), l\'égalité filles-garçons, le fonctionnement démocratique, développer l\'empathie, le respect de l\'intimité et du consentement, et prévenir le harcèlement.',
+        lessonHtml: `
+          <div class="space-y-3 text-sm leading-relaxed">
+            <div class="p-4 rounded-2xl bg-teal-50 border border-teal-200">
+              <h4 class="font-bold text-teal-950 text-base mb-1">🤝 Grandir en Citoyen Responsable et Respectueux (EMC + EVAR)</h4>
+              <p class="text-xs">
+                • <strong>Valeurs de la République :</strong> La <strong>Liberté</strong> (s'exprimer, circuler dans le respect des lois), l'<strong>Égalité</strong> (mêmes droits pour tous, égalité filles-garçons, refus des discriminations), la <strong>Fraternité</strong> (solidarité, entraide) et la <strong>Laïcité</strong>.<br>
+                • <strong>EVAR (Vie affective et relationnelle - BO fév. 2025) :</strong> Apprendre à reconnaître et exprimer ses émotions sans violence, respecter son corps et celui des autres, comprendre la notion de <strong>consentement</strong> (le droit de dire non et de respecter le non d'autrui) et protéger son <strong>intimité</strong>.<br>
+                • <strong>Numérique & Harcèlement :</strong> Ne jamais publier de photo ou d'information privée sans accord, et alerter immédiatement un adulte de confiance (parents, enseignant, numéro 3018) en cas de harcèlement ou cyberharcèlement.
+              </p>
+            </div>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-emc-1',
+            instruction: 'Complète le troisième mot de la devise de la République française : « Liberté, Égalité, ... »',
+            expected: 'Fraternité',
+            hint: 'Ce mot désigne le lien de solidarité et d\'entraide entre les citoyens.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'En EVAR et EMC, que signifie respecter le « consentement » d\'un camarade dans la vie quotidienne ou à l\'école ?',
+            options: ['S\'assurer qu\'il est réellement d\'accord et respecter immédiatement son refus s\'il dit « non »', 'Le forcer à jouer même s\'il ne veut pas', 'Prendre ses affaires sans lui demander', 'Publier sa photo sans son avis'],
+            correct: 0,
+            hint: 'Chacun a droit au respect de son corps, de ses limites et de son accord.',
+            explain: 'Le consentement implique de demander l\'accord d\'autrui et de toujours respecter un refus.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation : Quelle institution démocratique française discute et vote les lois ?',
+            options: ['Le Parlement (Assemblée nationale et Sénat)', 'Le club de sport municipal', 'La météo nationale', 'Les musées'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-emc-1', text: 'Comprendre et appliquer les valeurs de la République (Liberté, Égalité, Fraternité, Laïcité) et l\'égalité filles-garçons' },
+          { id: 'c-emc-2', text: 'EVAR : Identifier ses émotions, pratiquer l\'empathie, respecter l\'intimité et le consentement et prévenir le cyberharcèlement' }
+        ]
+      },
+
+      {
+        id: 'lv-cecrl-c3',
+        level: 'CM1',
+        subject: 'Langues vivantes',
+        boRef: 'BO n° 12 du 19 mars 2026 (CM1) & CECRL / PARLE AEFE',
+        socleDomain: 1,
+        title: 'Langues Vivantes (Anglais / Parcours PARLE AEFE) : Les 5 Activités Langagières (Niveau A1 vers A2)',
+        summary: 'Écouter et comprendre, lire, parler en continu, écrire et dialoguer en mobilisant le vocabulaire de la vie quotidienne et les repères culturels des pays anglophones ou du pays hôte.',
+        lessonHtml: `
+          <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs space-y-2">
+            <h4 class="font-bold text-rose-950 text-sm">🗣️ Les expressions clés pour se présenter et dialoguer (English Cycle 3)</h4>
+            <p>• <strong>Se présenter :</strong> <em>"Hello! My name is..., I am ten years old and I live in..."</em></p>
+            <p>• <strong>Parler de ses goûts :</strong> <em>"I like playing basketball and reading books, but I don't like..."</em></p>
+            <p>• <strong>Poser une question et réagir :</strong> <em>"How are you today? — I'm fine, thank you! What is your favourite subject?"</em></p>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-lv-1',
+            instruction: 'Complète la réponse en anglais avec le verbe être conjugué : « How old are you? — I ... ten years old. » (am / is / are)',
+            expected: 'am',
+            hint: 'Avec le pronom sujet « I » (je), to be se conjugue « I am ».'
+          }
+        ],
+        quiz: [
+          {
+            q: 'Que signifie la question « Where do you live? » lors d\'un dialogue ?',
+            options: ['Où habites-tu ?', 'Quel âge as-tu ?', 'Quelle heure est-il ?', 'Quel temps fait-il ?'],
+            correct: 0,
+            hint: 'Le verbe « to live » signifie habiter / vivre.',
+            explain: '« Where do you live? » demande le lieu d\'habitation (ex : « I live in Dakar / Johannesburg / Paris »).'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation : Choisis la phrase correctement construite pour exprimer ses goûts en anglais :',
+            options: ['I like reading adventure stories.', 'I am like read book.', 'Me liking books.', 'He like I.'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-lv-1', text: 'Pratiquer les 5 activités langagières du CECRL (écouter, lire, parler en continu, écrire, dialoguer) et découvrir les cultures associées' }
+        ]
+      },
+
+      {
+        id: 'art-eps-c3',
+        level: 'CM2',
+        subject: 'Arts & Musique',
+        boRef: 'BO n° 31 du 30 juillet 2020 & BO EPS 28 mai 2026',
+        socleDomain: 5,
+        title: 'Arts Plastiques, Éducation Musicale, Histoire des Arts & EPS (Rôles Sociaux et Santé)',
+        summary: 'Interpréter 4 chants/an, analyser 6 œuvres musicales/an, situer des œuvres d\'art dans les 4 grandes périodes historiques, et maîtriser les 4 champs d\'apprentissage en EPS.',
+        lessonHtml: `
+          <div class="p-4 rounded-2xl bg-pink-50 border border-pink-200 text-xs space-y-2">
+            <h4 class="font-bold text-pink-950 text-sm">🎨 Histoire des Arts & Éducation Musicale au Cycle 3</h4>
+            <p>• <strong>Pour analyser une œuvre d'art :</strong> 1. Identifier sa nature (peinture, sculpture, architecture, œuvre musicale) et son auteur ; 2. La situer dans l'une des 4 grandes périodes (Préhistoire/Antiquité, Moyen Âge, Temps modernes, Époque contemporaine) ; 3. Décrire ses formes, couleurs, matériaux ou instruments ; 4. Donner son ressenti argumenté.</p>
+          </div>
+        `,
+        exercises: [
+          {
+            id: 'ex-art-1',
+            instruction: 'Combien de chants au minimum chaque élève doit-il apprendre et interpréter par an au cycle 3 ? (Écris le chiffre).',
+            expected: '4',
+            hint: 'Le programme fixe un repère d\'au moins 4 chants et 6 œuvres écoutées par an.'
+          }
+        ],
+        quiz: [
+          {
+            q: 'À quelle grande période de l\'histoire des arts appartiennent les pyramides d\'Égypte et le Colisée de Rome ?',
+            options: ['L\'Antiquité', 'L\'Époque contemporaine (XXe siècle)', 'La Révolution industrielle', 'Le futur'],
+            correct: 0,
+            hint: 'C\'est la période des grandes civilisations anciennes avant la chute de Rome en 476.',
+            explain: 'Les œuvres égyptiennes, grecques et romaines appartiennent à l\'Antiquité.'
+          }
+        ],
+        evaluation: [
+          {
+            q: 'Évaluation : En EPS, pourquoi l\'échauffement avant l\'effort et la récupération après l\'effort sont-ils essentiels ?',
+            options: ['Pour préparer les muscles, le cœur et les articulations et prévenir les blessures (éducation à la santé)', 'Pour perdre du temps de jeu', 'Pour se fatiguer avant de commencer', 'Cela ne sert à rien'],
+            correct: 0
+          }
+        ],
+        competencies: [
+          { id: 'c-art-1', text: 'Chanter 4 chants/an, analyser 6 œuvres musicales/an et situer des œuvres plastiques dans l\'histoire des arts' },
+          { id: 'c-eps-1', text: 'EPS : Agir dans les 4 champs d\'apprentissage, tenir des rôles d\'arbitre/observateur et appliquer les règles d\'hygiène et de santé' }
+        ]
+      }
+    ];
+
+    // -------------------------------------------------------------
+    // 4. BANQUE DE PROBLÈMES AVEC AIDES CACHÉES (« COUP DE POUCE »)
+    // -------------------------------------------------------------
+    const MATH_PROBLEMS_BANK = [
+      {
+        id: 'prob-1',
+        level: 'CM1',
+        type: 'Problème à 2 étapes (Multiplicatif + Additif)',
+        statement: 'Pour équiper la classe de CM1, le directeur achète 6 dictionnaires à 15 € l\'unité et une grande carte murale à 34 €. Quel est le coût total de cet achat ?',
+        modelHint: '📊 Schéma en barre : Calcule d\'abord les 6 parts égales de 15 € (6 × 15 = 90 €), puis ajoute la part de 34 €.',
+        answer: 124,
+        unit: '€'
+      },
+      {
+        id: 'prob-2',
+        level: 'CM1',
+        type: 'Fractions simples d\'une grandeur',
+        statement: 'Un bidon contient 60 litres d\'eau de pluie pour arroser le jardin de l\'école. Les élèves utilisent un tiers (1/3) du bidon le matin. Combien de litres d\'eau ont-ils utilisés ?',
+        modelHint: '🧭 Coup de pouce : Prendre un tiers (1/3) de 60 L revient à partager 60 en 3 parts égales (60 ÷ 3).',
+        answer: 20,
+        unit: 'L'
+      },
+      {
+        id: 'prob-3',
+        level: 'CM1',
+        type: 'Nombres décimaux (Centièmes)',
+        statement: 'Lors d\'un concours de saut en longueur en EPS, Inès saute à 3,25 m au premier essai, puis améliore son saut de 0,45 m au deuxième essai. Quelle est la longueur de son deuxième saut en mètres ?',
+        modelHint: '🧭 Coup de pouce : Pose ou calcule mentalement l\'addition de nombres décimaux : 3,25 + 0,45 (attention : 25 centièmes + 45 centièmes = 70 centièmes).',
+        answer: 3.7,
+        unit: 'm'
+      },
+      {
+        id: 'prob-4',
+        level: 'CM2',
+        type: 'Proportionnalité',
+        statement: 'Une imprimante 3D du laboratoire de technologie consomme 150 g de fil biodégradable pour fabriquer 5 maquettes identiques. Combien de grammes de fil faut-il pour fabriquer 15 maquettes ?',
+        modelHint: '📊 Coup de pouce Proportionnalité : 15 maquettes, c\'est 3 fois plus que 5 maquettes (5 × 3 = 15). Multiplie donc 150 g par 3 ! (Ou passe par l\'unité : 1 maquette = 30 g).',
+        answer: 450,
+        unit: 'g'
+      },
+      {
+        id: 'prob-5',
+        level: 'CM2',
+        type: 'Calcul d\'Aires & Géométrie',
+        statement: 'La cour rectangulaire de l\'école mesure 25 m de longueur et 12 m de largeur. Quelle est son aire totale en mètres carrés (m²) ?',
+        modelHint: '📐 Coup de pouce : Aire du rectangle = Longueur × largeur = 25 × 12 (Astuce calcul mental : 25 × 4 = 100, et 12 = 4 × 3, donc 100 × 3).',
+        answer: 300,
+        unit: 'm²'
+      },
+      {
+        id: 'prob-6',
+        level: 'CM2',
+        type: 'Division à quotient décimal',
+        statement: 'Huit élèves se partagent équitablement un rouleau de fil de cuivre de 18 mètres pour construire leurs circuits électriques. Quelle longueur exacte de fil (en mètres) reçoit chaque élève ?',
+        modelHint: '🧭 Coup de pouce : Effectue la division à quotient décimal 18 ÷ 8 (18 = 16 + 2 ; 16 ÷ 8 = 2 et 2 ÷ 8 = 1/4 = 0,25).',
+        answer: 2.25,
+        unit: 'm'
+      }
+    ];
+
+    const SOCLE_DOMAINS = [
+      { id: 1, name: 'Domaine 1 : Les langages pour penser et communiquer', desc: 'Langue française, langues vivantes, langages mathématiques, scientifiques, informatiques et artistiques.' },
+      { id: 2, name: 'Domaine 2 : Les méthodes et outils pour apprendre', desc: 'Organisation du travail, mémorisation, coopération, outils numériques.' },
+      { id: 3, name: 'Domaine 3 : La formation de la personne et du citoyen', desc: 'Valeurs de la République (EMC), vie affective et relationnelle (EVAR), respect des règles.' },
+      { id: 4, name: 'Domaine 4 : Les systèmes naturels et les systèmes techniques', desc: 'Sciences, technologie, résolution de problèmes, santé et environnement.' },
+      { id: 5, name: 'Domaine 5 : Les représentations du monde et l\'activité humaine', desc: 'Histoire-géographie, histoire des arts et culture littéraire.' }
+    ];
+
+    const REPERES_ITEMS = [
+      { id: 'rep-1', level: 'CM1', text: 'Repères Français CM1 : Lire un texte à voix haute avec fluidité et comprendre des textes narratifs, informatifs et composites.' },
+      { id: 'rep-2', level: 'CM1', text: 'Repères Français CM1 : Réaliser les accords dans le groupe nominal et conjuguer être, avoir, 1er groupe et les 8 verbes fréquents du 3e groupe.' },
+      { id: 'rep-3', level: 'CM1', text: 'Repères Maths CM1 : Nombres jusqu\'à 999 999, fractions (≤ 20), décimaux aux centièmes, calcul mental et problèmes.' },
+      { id: 'rep-4', level: 'CM2', text: 'Repères Français CM2 : Repérer l\'implicite, se repérer dans la phrase complexe et accorder les participes passés.' },
+      { id: 'rep-5', level: 'CM2', text: 'Repères Maths CM2 : Nombres jusqu\'à 999 999 999, fractions (≤ 60), décimaux aux millièmes, aires, proportionnalité et probabilités.' }
+    ];
+
+    const ART_MUSIC_ITEMS = [
+      { id: 'am-1', text: 'Chant n°1 appris et interprété par cœur' },
+      { id: 'am-2', text: 'Chant n°2 appris et interprété en groupe' },
+      { id: 'am-3', text: 'Chant n°3 appris et interprété' },
+      { id: 'am-4', text: 'Chant n°4 appris et interprété (Objectif annuel : 4 chants)' },
+      { id: 'am-5', text: '6 extraits d\'œuvres musicales écoutés et comparés dans l\'année' },
+      { id: 'am-6', text: 'Œuvres d\'Histoire des Arts analysées (Antiquité, Moyen Âge, Temps modernes, XXe-XXIe s.)' }
+    ];
+
+    // -------------------------------------------------------------
+    // 5. PROFILS ÉLÈVES PAR DÉFAUT
+    // -------------------------------------------------------------
+    const DEFAULT_STUDENTS = [
+      {
+        id: 'stu-1',
+        name: 'Aminata',
+        level: 'CM2',
+        parentCode: 'PAR-AMINATA',
+        xp: 360,
+        weeklyProblems: 6,
+        completedCompetencies: ['c-fr2-1', 'c-fr2-2', 'c-ma2-1', 'c-sc2-1', 'c-hg2-1', 'c-emc-1'],
+        completedReperes: ['rep-4', 'rep-5'],
+        completedArtMusic: ['am-1', 'am-2', 'am-5'],
+        solvedProblems: ['prob-4', 'prob-5'],
+        evaluationScores: { 'fr-cm2-synt': '18/20', 'ma-cm2-num': '20/20' },
+        parentMessage: 'Bravo Aminata pour tes excellentes évaluations en Français et en Mathématiques !',
+        books: [
+          { title: 'Les Malheurs de Sophie – Comtesse de Ségur', category: 'Œuvre du patrimoine', theme: 'Se découvrir, s\'affirmer dans le rapport aux autres', summary: 'Lecture fluide et analyse du caractère de Sophie.' }
+        ],
+        homework: [
+          { id: 'hw-1', date: '20/10/2026', subject: 'Mathématiques', title: 'Exercices sur les nombres décimaux aux millièmes', notes: 'J\'ai réussi tous les encadrements au millième près.', signedByParent: true }
+        ]
+      },
+      {
+        id: 'stu-2',
+        name: 'Lucas',
+        level: 'CM1',
+        parentCode: 'PAR-LUCAS',
+        xp: 280,
+        weeklyProblems: 5,
+        completedCompetencies: ['c-fr1-1', 'c-fr1-2', 'c-ma1-1', 'c-sc1-1', 'c-hg1-1'],
+        completedReperes: ['rep-1', 'rep-3'],
+        completedArtMusic: ['am-1'],
+        solvedProblems: ['prob-1', 'prob-2'],
+        evaluationScores: { 'fr-cm1-gram': '17/20' },
+        parentMessage: 'Super travail Lucas ! Continue de suivre chaque étape pas à pas.',
+        books: [],
+        homework: []
+      },
+      {
+        id: 'stu-3',
+        name: 'Kofi',
+        level: 'CM2',
+        parentCode: 'PAR-KOFI',
+        xp: 310,
+        weeklyProblems: 4,
+        completedCompetencies: ['c-ma2-1', 'c-ma2-3', 'c-sc2-2', 'c-hg2-2'],
+        completedReperes: ['rep-5'],
+        completedArtMusic: ['am-1', 'am-2'],
+        solvedProblems: ['prob-5'],
+        evaluationScores: {},
+        parentMessage: 'Nous sommes très fiers de tes progrès en sciences et en géométrie !',
+        books: [],
+        homework: []
+      },
+      {
+        id: 'stu-4',
+        name: 'Inès',
+        level: 'CM1',
+        parentCode: 'PAR-INES',
+        xp: 330,
+        weeklyProblems: 7,
+        completedCompetencies: ['c-fr1-5', 'c-fr1-6', 'c-ma1-2', 'c-ma1-3', 'c-lv-1'],
+        completedReperes: ['rep-1', 'rep-2'],
+        completedArtMusic: ['am-1', 'am-2', 'am-3'],
+        solvedProblems: ['prob-1', 'prob-3'],
+        evaluationScores: { 'ma-cm1-num': '19/20' },
+        parentMessage: 'Bravo Inès pour ton 19/20 en numération CM1 !',
+        books: [],
+        homework: []
+      },
+      {
+        id: 'stu-5',
+        name: 'Yanis',
+        level: 'CM1',
+        parentCode: 'PAR-YANIS',
+        xp: 210,
+        weeklyProblems: 3,
+        completedCompetencies: ['c-fr1-1', 'c-ma1-1', 'c-sc1-2'],
+        completedReperes: ['rep-1'],
+        completedArtMusic: ['am-1'],
+        solvedProblems: ['prob-1'],
+        evaluationScores: {},
+        parentMessage: 'Prends bien le temps de lire la leçon illustrée avant de faire le quiz, courage Yanis !',
+        books: [],
+        homework: []
+      },
+      {
+        id: 'stu-6',
+        name: 'Chloé',
+        level: 'CM2',
+        parentCode: 'PAR-CHLOE',
+        xp: 410,
+        weeklyProblems: 8,
+        completedCompetencies: ['c-fr2-1', 'c-fr2-3', 'c-ma2-1', 'c-ma2-4', 'c-sc2-3', 'c-hg2-1', 'c-emc-2'],
+        completedReperes: ['rep-4', 'rep-5'],
+        completedArtMusic: ['am-1', 'am-2', 'am-3', 'am-4'],
+        solvedProblems: ['prob-4', 'prob-5', 'prob-6'],
+        evaluationScores: { 'sc-cm2-mat': '20/20' },
+        parentMessage: 'Excellent parcours Chloé, tu es prête pour le collège !',
+        books: [],
+        homework: []
+      }
+    ];
+
+    // -------------------------------------------------------------
+    // 6. ÉTAT & SAUVEGARDE (LOCAL + FIREBASE)
+    // -------------------------------------------------------------
+    const STORAGE_KEY = 'CAP_REUSSITE_CYCLE3_2026_V3_GUIDED';
+    const FIREBASE_URL_KEY = 'CAP_REUSSITE_FIREBASE_URL';
+
+    let appData = {
+      curriculum: INITIAL_CURRICULUM,
+      students: DEFAULT_STUDENTS
+    };
+
+    let activeStudentId = 'stu-1';
+    let selectedSubjectId = 'Français';
+    let activeLevelFilter = 'AUTO'; // AUTO = filtre selon la classe de l'élève connecté
+    let openedModuleId = null;
+    let activeModuleStep = 1; // 1 = Leçon, 2 = Exercices, 3 = Quiz, 4 = Évaluation
+    let loggedInParentStudentId = null;
+
+    function loadAppState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.students && parsed.curriculum) {
+            appData = parsed;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      const fbUrl = localStorage.getItem(FIREBASE_URL_KEY);
+      if (fbUrl) {
+        const inp = document.getElementById('firebaseUrlInput');
+        if (inp) inp.value = fbUrl;
+        pullFromFirebase(fbUrl);
+      }
+    }
+
+    function saveAppState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      const fbUrl = localStorage.getItem(FIREBASE_URL_KEY);
+      if (fbUrl) pushToFirebase(fbUrl);
+    }
+
+    async function pushToFirebase(fbUrl) {
+      try {
+        const cleanUrl = fbUrl.replace(/\/$/, '') + '/capReussiteGuidedData.json';
+        await fetch(cleanUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(appData)
+        });
+        document.getElementById('syncStatusText').textContent = 'Synchronisé Cloud';
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    async function pullFromFirebase(fbUrl) {
+      try {
+        const cleanUrl = fbUrl.replace(/\/$/, '') + '/capReussiteGuidedData.json';
+        const res = await fetch(cleanUrl);
+        if (res.ok) {
+          const remote = await res.json();
+          if (remote && remote.students) {
+            appData = remote;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            renderAll();
+          }
+          document.getElementById('syncStatusText').textContent = 'Synchronisé Cloud';
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+
+    function saveFirebaseConfig() {
+      const val = document.getElementById('firebaseUrlInput').value.trim();
+      const msg = document.getElementById('firebaseStatusMsg');
+      if (!val) {
+        localStorage.removeItem(FIREBASE_URL_KEY);
+        msg.textContent = 'Mode local activé.';
+        return;
+      }
+      localStorage.setItem(FIREBASE_URL_KEY, val);
+      pushToFirebase(val);
+      msg.textContent = 'Synchronisation Cloud activée avec succès !';
+    }
+
+    function getActiveStudent() {
+      return appData.students.find(s => s.id === activeStudentId) || appData.students[0];
+    }
+
+    // -------------------------------------------------------------
+    // 7. RENDU DE L'EN-TÊTE ÉLÈVE & NAVIGATION PRINCIPALE
+    // -------------------------------------------------------------
+    function renderStudentHeader() {
+      const select = document.getElementById('studentSelect');
+      select.innerHTML = appData.students.map(s =>
+        `<option value="${s.id}" ${s.id === activeStudentId ? 'selected' : ''}>${s.name} (${s.level})</option>`
+      ).join('');
+
+      const student = getActiveStudent();
+      document.getElementById('studentAvatar').textContent = student.name.charAt(0).toUpperCase();
+      document.getElementById('studentLevelBadge').textContent = `Classe de ${student.level}`;
+      document.getElementById('studentParentMessage').innerHTML = `
+        <i data-lucide="heart" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+        <span><strong>Message de tes parents :</strong> ${student.parentMessage || 'Bon courage pour ton parcours du jour !'}</span>
+      `;
+
+      const allComps = appData.curriculum.flatMap(m => m.competencies);
+      document.getElementById('studentXP').textContent = `${student.xp} XP`;
+      document.getElementById('studentCompCount').textContent = `${student.completedCompetencies.length} / ${allComps.length}`;
+      document.getElementById('studentProbCount').textContent = `${student.weeklyProblems || 0} / 10`;
+      document.getElementById('weeklyProblemCounterBig').textContent = `${student.weeklyProblems || 0} / 10`;
+      document.getElementById('studentBookCount').textContent = `${(student.books || []).length} / 7`;
+    }
+
+    function switchStudentMainSection(sec) {
+      const map = {
+        parcours: { div: 'studentSectionParcours', btn: 'navBtnParcours' },
+        problems: { div: 'studentSectionProblems', btn: 'navBtnProblems' },
+        homework: { div: 'studentSectionHomework', btn: 'navBtnHomework' },
+        bilan: { div: 'studentSectionBilan', btn: 'navBtnBilan' }
+      };
+
+      Object.keys(map).forEach(k => {
+        const isCurrent = k === sec;
+        document.getElementById(map[k].div).classList.toggle('hidden', !isCurrent);
+        const btn = document.getElementById(map[k].btn);
+        if (isCurrent) {
+          btn.className = 'p-4 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-indigo-600 text-white border-indigo-600 shadow-md';
+        } else {
+          btn.className = 'p-4 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white text-slate-800 border-slate-200 hover:border-indigo-300';
+        }
+      });
+      lucide.createIcons();
+    }
+
+    // -------------------------------------------------------------
+    // 8. RENDU DU PARCOURS GUIDÉ : MATIÈRES -> CHAPITRES -> 4 ÉTAPES
+    // -------------------------------------------------------------
+    function setCurriculumLevelFilter(lvl) {
+      activeLevelFilter = lvl;
+      ['AUTO', 'CM1', 'CM2', 'ALL'].forEach(l => {
+        const b = document.getElementById('lvlBtn' + l);
+        if (b) {
+          b.className = l === lvl
+            ? 'px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm'
+            : 'px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-white';
+        }
+      });
+      renderSubjectCardsAndChapters();
+    }
+
+    function selectSubjectCard(subjId) {
+      selectedSubjectId = subjId;
+      renderSubjectCardsAndChapters();
+    }
+
+    function renderSubjectCardsAndChapters() {
+      const student = getActiveStudent();
+      const effectiveLevel = activeLevelFilter === 'AUTO' ? student.level : activeLevelFilter;
+
+      // 1. Grille des 8 matières
+      const grid = document.getElementById('subjectCardsGrid');
+      grid.innerHTML = SUBJECTS_META.map(s => {
+        const isSelected = s.id === selectedSubjectId;
+        return `
+          <button onclick="selectSubjectCard('${s.id}')" class="p-3.5 rounded-2xl border-2 text-left transition flex flex-col justify-between ${
+            isSelected
+              ? 'border-indigo-600 bg-indigo-50/90 shadow-sm scale-[1.02]'
+              : 'border-slate-200 bg-white hover:border-slate-300'
+          }">
+            <div class="w-9 h-9 rounded-xl ${s.color} text-white flex items-center justify-center mb-2 shadow-sm">
+              <i data-lucide="${s.icon}" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-slate-900 leading-tight">${s.label}</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${s.hours}</div>
+            </div>
+          </button>
+        `;
+      }).join('');
+
+      // 2. Liste des chapitres filtrés
+      const chapters = appData.curriculum.filter(m => {
+        const matchSubj = m.subject === selectedSubjectId;
+        const matchLvl = effectiveLevel === 'ALL' || m.level === effectiveLevel || m.subject === 'Langues vivantes' || m.subject === 'EMC & EVAR' || m.subject === 'Arts & Musique';
+        return matchSubj && matchLvl;
+      });
+
+      document.getElementById('selectedSubjectHeading').textContent = `${selectedSubjectId} — Choisis ton chapitre pour démarrer le parcours pas à pas`;
+      document.getElementById('selectedSubjectCount').textContent = `${chapters.length} chapitre(s)`;
+
+      const chapGrid = document.getElementById('chaptersListGrid');
+      chapGrid.innerHTML = chapters.map(mod => {
+        const doneComps = mod.competencies.filter(c => student.completedCompetencies.includes(c.id)).length;
+        const pct = Math.round((doneComps / mod.competencies.length) * 100);
+        const evalScore = (student.evaluationScores || {})[mod.id];
+
+        return `
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-300 transition flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${mod.level === 'CM1' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">
+                  Programme ${mod.level}
+                </span>
+                ${
+                  evalScore
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">🏆 Évaluation : ${evalScore}</span>`
+                    : `<span class="text-[11px] text-slate-400">4 étapes guidées</span>`
+                }
+              </div>
+              <h4 class="text-base font-bold text-slate-900">${mod.title}</h4>
+              <p class="text-xs text-slate-600 leading-relaxed">${mod.summary}</p>
+            </div>
+
+            <div class="space-y-2.5 pt-2 border-t border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold text-slate-600">
+                <span>Compétences validées : ${doneComps}/${mod.competencies.length}</span>
+                <span>${pct}%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                <div class="h-full bg-emerald-500" style="width:${pct}%"></div>
+              </div>
+
+              <button onclick="openModuleStepView('${mod.id}', 1)" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow flex items-center justify-center gap-2 transition">
+                <i data-lucide="play" class="w-4 h-4"></i> Ouvrir le Parcours Pas à Pas (Leçon &rarr; Exos &rarr; Quiz &rarr; Éval)
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // -------------------------------------------------------------
+    // 9. VUE D'UN CHAPITRE EN 4 ÉTAPES AVEC AIDES CACHÉES
+    // -------------------------------------------------------------
+    function openModuleStepView(modId, step = 1) {
+      openedModuleId = modId;
+      activeModuleStep = step;
+      document.getElementById('parcoursHomeView').classList.add('hidden');
+      document.getElementById('parcoursModuleView').classList.remove('hidden');
+      renderActiveModuleStep();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeModuleStepView() {
+      openedModuleId = null;
+      document.getElementById('parcoursModuleView').classList.add('hidden');
+      document.getElementById('parcoursHomeView').classList.remove('hidden');
+      renderSubjectCardsAndChapters();
+    }
+
+    function goToModuleStep(step) {
+      activeModuleStep = step;
+      renderActiveModuleStep();
+    }
+
+    function renderActiveModuleStep() {
+      const mod = appData.curriculum.find(m => m.id === openedModuleId);
+      if (!mod) return;
+      const student = getActiveStudent();
+
+      document.getElementById('activeModuleBadge').textContent = `${mod.level} • ${mod.subject}`;
+      document.getElementById('activeModuleBo').textContent = mod.boRef;
+      document.getElementById('activeModuleTitle').textContent = mod.title;
+
+      // Mise à jour visuelle des 4 boutons d'étapes
+      for (let s = 1; s <= 4; s++) {
+        const btn = document.getElementById('stepBtn' + s);
+        if (s === activeModuleStep) {
+          btn.className = 'p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 step-active shadow-md';
+        } else {
+          btn.className = 'p-3.5 rounded-2xl border-2 text-left transition flex items-center gap-3 bg-white border-slate-200 text-slate-700 hover:border-indigo-300';
+        }
+      }
+
+      const container = document.getElementById('moduleStepContent');
+
+      // ================= ÉTAPE 1 : LEÇON ILLUSTRÉE =================
+      if (activeModuleStep === 1) {
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+              ${mod.lessonHtml}
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+              <span class="text-xs text-slate-500">Prends le temps de bien observer les exemples avant de passer à l'entraînement.</span>
+              <button onclick="goToModuleStep(2)" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow flex items-center gap-2">
+                J'ai bien compris la leçon, passer à l'Étape 2 (Exercices) <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // ================= ÉTAPE 2 : EXERCICES D'ENTRAÎNEMENT (AVEC AIDE CACHÉE) =================
+      else if (activeModuleStep === 2) {
+        const exList = mod.exercises || [];
+        container.innerHTML = `
+          <div class="space-y-5">
+            <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-indigo-950 text-sm">✍️ Étape 2 : Entraîne-toi pas à pas</h4>
+                <p class="text-xs text-indigo-800">Essaie d'abord de répondre seul. Si tu bloques, clique sur <strong>« 💡 Besoin d'un coup de pouce ? »</strong> pour afficher l'aide.</p>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              ${exList.map((ex, idx) => `
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div class="text-sm font-bold text-slate-900">Exercice ${idx + 1} : ${ex.instruction}</div>
+
+                  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <input type="text" id="exInput_${ex.id}" placeholder="Écris ta réponse ici..." class="flex-1 rounded-xl border border-slate-300 px-3.5 py-2 text-sm bg-white focus:ring-2 focus:ring-indigo-500" />
+                    <button onclick="checkStepExercise('${mod.id}', '${ex.id}')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold">
+                      Vérifier ma réponse
+                    </button>
+                    <button onclick="toggleHiddenHint('exHint_${ex.id}')" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold flex items-center justify-center gap-1.5">
+                      💡 Besoin d'un coup de pouce ?
+                    </button>
+                  </div>
+
+                  <!-- Aide cachée par défaut -->
+                  <div id="exHint_${ex.id}" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 hint-box">
+                    <strong>Indice méthodologique :</strong> ${ex.hint}
+                  </div>
+
+                  <!-- Retour immédiat -->
+                  <div id="exFeedback_${ex.id}" class="hidden text-xs font-bold p-2.5 rounded-xl"></div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+              <button onclick="goToModuleStep(1)" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100">
+                &larr; Revoir la leçon
+              </button>
+              <button onclick="goToModuleStep(3)" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold shadow flex items-center gap-2">
+                Passer à l'Étape 3 (Quiz Interactif) <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // ================= ÉTAPE 3 : QUIZ INTERACTIF (AVEC AIDE CACHÉE) =================
+      else if (activeModuleStep === 3) {
+        const qList = mod.quiz || [];
+        container.innerHTML = `
+          <div class="space-y-5">
+            <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200">
+              <h4 class="font-bold text-purple-950 text-sm">🎯 Étape 3 : Quiz Interactif de Vérification</h4>
+              <p class="text-xs text-purple-800">Choisis la bonne réponse pour chaque question. Un bouton d'indice est disponible si tu hésites !</p>
+            </div>
+
+            <div class="space-y-4">
+              ${qList.map((qItem, qIdx) => `
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                  <div class="flex flex-wrap items-start justify-between gap-2">
+                    <p class="text-sm font-bold text-slate-900">${qIdx + 1}. ${qItem.q}</p>
+                    ${
+                      qItem.hint
+                        ? `<button onclick="toggleHiddenHint('quizHint_${qIdx}')" class="px-3 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold shrink-0">
+                            💡 Afficher un indice
+                          </button>`
+                        : ''
+                    }
+                  </div>
+
+                  <!-- Indice caché par défaut -->
+                  <div id="quizHint_${qIdx}" class="hidden p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+                    <strong>Indice :</strong> ${qItem.hint || ''}
+                  </div>
+
+                  <div class="space-y-2">
+                    ${qItem.options.map((opt, optIdx) => `
+                      <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200 cursor-pointer hover:border-indigo-400 text-xs">
+                        <input type="radio" name="step_quiz_${qIdx}" value="${optIdx}" class="text-indigo-600" />
+                        <span>${opt}</span>
+                      </label>
+                    `).join('')}
+                  </div>
+
+                  <div id="stepQuizExplain_${qIdx}" class="hidden text-xs p-3 rounded-xl"></div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div id="stepQuizGlobalResult" class="hidden p-4 rounded-2xl border text-sm font-bold"></div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
+              <button onclick="goToModuleStep(2)" class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100">
+                &larr; Retour aux exercices
+              </button>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="submitStepQuiz('${mod.id}')" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold shadow">
+                  ✅ Corriger mon Quiz (+XP)
+                </button>
+                <button onclick="goToModuleStep(4)" class="px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold shadow flex items-center gap-1.5">
+                  Étape 4 : Évaluation Bilan <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // ================= ÉTAPE 4 : ÉVALUATION BILAN SUR 20 & COMPÉTENCES =================
+      else if (activeModuleStep === 4) {
+        const evalList = mod.evaluation || [];
+        const currentScore = (student.evaluationScores || {})[mod.id];
+
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h4 class="font-bold text-amber-950 text-sm">🏆 Étape 4 : Évaluation Bilan du Chapitre (Sans aide, comme en classe)</h4>
+                <p class="text-xs text-amber-900">Réponds aux questions bilan pour obtenir ta note sur 20 et valider tes compétences officielles.</p>
+              </div>
+              ${
+                currentScore
+                  ? `<span class="px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold">Meilleure note : ${currentScore}</span>`
+                  : ''
+              }
+            </div>
+
+            <div class="space-y-4">
+              ${evalList.map((ev, eIdx) => `
+                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+                  <p class="text-sm font-bold text-slate-900">${ev.q}</p>
+                  <div class="space-y-1.5">
+                    ${ev.options.map((opt, oIdx) => `
+                      <label class="flex items-center gap-2.5 p-3 rounded-xl bg-white border border-slate-200 cursor-pointer hover:border-indigo-400 text-xs">
+                        <input type="radio" name="step_eval_${eIdx}" value="${oIdx}" class="text-indigo-600" />
+                        <span>${opt}</span>
+                      </label>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div id="stepEvalResultBox" class="hidden p-4 rounded-2xl border text-sm font-bold"></div>
+
+            <div class="flex justify-end">
+              <button onclick="submitStepEvaluation('${mod.id}')" class="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-indigo-950 text-sm font-bold shadow">
+                🎓 Valider mon Évaluation Bilan (Calculer ma note / 20)
+              </button>
+            </div>
+
+            <!-- Validation des compétences du programme officiel -->
+            <div class="p-5 rounded-2xl bg-white border-2 border-emerald-200 space-y-3">
+              <h4 class="font-bold text-emerald-950 text-sm flex items-center gap-2">
+                <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i>
+                Validation des Compétences du Programme Officiel (${mod.level})
+              </h4>
+              <p class="text-xs text-slate-500">Coche avec ton parent ou ton enseignant les compétences que tu maîtrises désormais :</p>
+              <div class="space-y-2">
+                ${mod.competencies.map(comp => {
+                  const isChecked = student.completedCompetencies.includes(comp.id);
+                  return `
+                    <label class="flex items-start gap-2.5 p-3 rounded-xl border ${
+                      isChecked ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-semibold' : 'bg-slate-50 border-slate-200 text-slate-700'
+                    } cursor-pointer text-xs">
+                      <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCompetency('${comp.id}')" class="mt-0.5 rounded text-emerald-600" />
+                      <span>${comp.text}</span>
+                    </label>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    // Vérification d'un exercice de l'étape 2
+    function checkStepExercise(modId, exId) {
+      const mod = appData.curriculum.find(m => m.id === modId);
+      const ex = (mod.exercises || []).find(e => e.id === exId);
+      if (!ex) return;
+
+      const userVal = document.getElementById(`exInput_${exId}`).value.trim().toLowerCase().replace(/\s+/g, ' ');
+      const expectedVal = ex.expected.trim().toLowerCase();
+      const fb = document.getElementById(`exFeedback_${exId}`);
+      fb.classList.remove('hidden');
+
+      if (userVal === expectedVal || userVal.replace('.', ',') === expectedVal) {
+        fb.className = 'text-xs font-bold p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900';
+        fb.innerHTML = `✅ Bravo ! C'est exactement « <strong>${ex.expected}</strong> » (+15 XP).`;
+        const student = getActiveStudent();
+        student.xp += 15;
+        saveAppState();
+        renderStudentHeader();
+      } else {
+        fb.className = 'text-xs font-bold p-3 rounded-xl bg-red-50 border border-red-200 text-red-800';
+        fb.innerHTML = `❌ Pas tout à fait. Clique sur « 💡 Besoin d'un coup de pouce ? » si tu veux un indice !`;
+      }
+    }
+
+    // Correction du Quiz de l'étape 3
+    function submitStepQuiz(modId) {
+      const mod = appData.curriculum.find(m => m.id === modId);
+      if (!mod) return;
+      const student = getActiveStudent();
+
+      let score = 0;
+      mod.quiz.forEach((qItem, qIdx) => {
+        const sel = document.querySelector(`input[name="step_quiz_${qIdx}"]:checked`);
+        const expEl = document.getElementById(`stepQuizExplain_${qIdx}`);
+        expEl.classList.remove('hidden');
+
+        if (sel && parseInt(sel.value, 10) === qItem.correct) {
+          score++;
+          expEl.className = 'text-xs p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900';
+          expEl.innerHTML = `<strong>✅ Exact !</strong> ${qItem.explain}`;
+        } else {
+          expEl.className = 'text-xs p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900';
+          expEl.innerHTML = `<strong>💡 Correction :</strong> ${qItem.explain}`;
+        }
+      });
+
+      const earnedXP = score * 20;
+      student.xp += earnedXP;
+
+      const globalBox = document.getElementById('stepQuizGlobalResult');
+      globalBox.classList.remove('hidden');
+      globalBox.className = 'p-4 rounded-2xl border bg-indigo-50 border-indigo-200 text-indigo-950 text-sm font-bold';
+      globalBox.innerHTML = `🎉 Score du Quiz : ${score} / ${mod.quiz.length} (+${earnedXP} XP). Tu peux maintenant passer à l'Étape 4 (Évaluation) !`;
+
+      saveAppState();
+      renderStudentHeader();
+    }
+
+    // Validation de l'Évaluation Bilan (Étape 4)
+    function submitStepEvaluation(modId) {
+      const mod = appData.curriculum.find(m => m.id === modId);
+      if (!mod || !mod.evaluation) return;
+      const student = getActiveStudent();
+
+      let correctCount = 0;
+      mod.evaluation.forEach((ev, eIdx) => {
+        const sel = document.querySelector(`input[name="step_eval_${eIdx}"]:checked`);
+        if (sel && parseInt(sel.value, 10) === ev.correct) {
+          correctCount++;
+        }
+      });
+
+      const noteSur20 = Math.round((correctCount / mod.evaluation.length) * 20);
+      if (!student.evaluationScores) student.evaluationScores = {};
+      student.evaluationScores[modId] = `${noteSur20}/20`;
+      student.xp += noteSur20 * 2;
+
+      // Si note >= 14/20, on valide automatiquement les compétences du chapitre
+      if (noteSur20 >= 14) {
+        mod.competencies.forEach(c => {
+          if (!student.completedCompetencies.includes(c.id)) {
+            student.completedCompetencies.push(c.id);
+          }
+        });
+      }
+
+      const box = document.getElementById('stepEvalResultBox');
+      box.classList.remove('hidden');
+      if (noteSur20 >= 14) {
+        box.className = 'p-4 rounded-2xl border bg-emerald-50 border-emerald-300 text-emerald-950 text-sm font-bold';
+        box.innerHTML = `🏆 Félicitations ! Tu obtiens la note de <strong>${noteSur20}/20</strong> (${correctCount}/${mod.evaluation.length}). Les compétences de ce chapitre sont automatiquement validées !`;
+      } else {
+        box.className = 'p-4 rounded-2xl border bg-amber-50 border-amber-300 text-amber-950 text-sm font-bold';
+        box.innerHTML = `📘 Tu obtiens <strong>${noteSur20}/20</strong> (${correctCount}/${mod.evaluation.length}). Relis tranquillement l'Étape 1 et réessaie pour dépasser 14/20 !`;
+      }
+
+      saveAppState();
+      renderStudentHeader();
+    }
+
+    function toggleCompetency(compId, targetStudentId = null) {
+      const student = targetStudentId
+        ? appData.students.find(s => s.id === targetStudentId)
+        : getActiveStudent();
+
+      const idx = student.completedCompetencies.indexOf(compId);
+      if (idx === -1) {
+        student.completedCompetencies.push(compId);
+        student.xp += 20;
+      } else {
+        student.completedCompetencies.splice(idx, 1);
+      }
+      saveAppState();
+      renderAll();
+      if (openedModuleId && activeModuleStep === 4) {
+        renderActiveModuleStep();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 10. ATELIER 10 PROBLÈMES PAR SEMAINE (AVEC AIDE MASQUÉE)
+    // -------------------------------------------------------------
+    function renderProblemsWorkshop() {
+      const student = getActiveStudent();
+      const container = document.getElementById('problemsListContainer');
+
+      container.innerHTML = MATH_PROBLEMS_BANK.map(prob => {
+        const isSolved = (student.solvedProblems || []).includes(prob.id);
+        return `
+          <div class="bg-white rounded-3xl p-5 shadow-sm border ${isSolved ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200'} space-y-3.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${prob.level === 'CM1' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}">${prob.level}</span>
+              <span class="text-xs font-semibold text-slate-500">${prob.type}</span>
+            </div>
+
+            <p class="text-sm font-bold text-slate-900 leading-relaxed">${prob.statement}</p>
+
+            <!-- Bouton pour démasquer le coup de pouce de modélisation uniquement en cas de besoin -->
+            <div>
+              <button onclick="toggleHiddenHint('probHint_${prob.id}')" class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold inline-flex items-center gap-1.5">
+                💡 Besoin d'un coup de pouce (Phase 2 : Modéliser) ?
+              </button>
+              <div id="probHint_${prob.id}" class="hidden mt-2 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+                ${prob.modelHint}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <input type="number" step="any" id="probInput_${prob.id}" placeholder="Ta réponse (${prob.unit})" class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs" />
+              <button onclick="checkMathProblem('${prob.id}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl">
+                Valider (${prob.unit})
+              </button>
+            </div>
+
+            <p id="probFeedback_${prob.id}" class="text-xs font-bold ${isSolved ? 'text-emerald-700' : 'hidden'}">
+              ${isSolved ? `✅ Problème réussi (${prob.answer} ${prob.unit})` : ''}
+            </p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function checkMathProblem(probId) {
+      const prob = MATH_PROBLEMS_BANK.find(p => p.id === probId);
+      const student = getActiveStudent();
+      const val = parseFloat(document.getElementById(`probInput_${probId}`).value.replace(',', '.'));
+      const fb = document.getElementById(`probFeedback_${probId}`);
+      fb.classList.remove('hidden');
+
+      if (Math.abs(val - prob.answer) < 0.001) {
+        fb.className = 'text-xs font-bold text-emerald-700';
+        fb.textContent = `✅ Bravo ! La bonne réponse est ${prob.answer} ${prob.unit} (+20 XP et +1 problème résolu cette semaine).`;
+        student.weeklyProblems = (student.weeklyProblems || 0) + 1;
+        student.xp += 20;
+        if (!student.solvedProblems) student.solvedProblems = [];
+        if (!student.solvedProblems.includes(probId)) student.solvedProblems.push(probId);
+        saveAppState();
+        renderStudentHeader();
+      } else {
+        fb.className = 'text-xs font-bold text-red-600';
+        fb.textContent = `❌ Essaie encore ! Clique sur le bouton « 💡 Besoin d'un coup de pouce » pour voir l'indice de modélisation.`;
+      }
+    }
+
+    function resetWeeklyProblems() {
+      const student = getActiveStudent();
+      student.weeklyProblems = 0;
+      saveAppState();
+      renderAll();
+    }
+
+    // -------------------------------------------------------------
+    // 11. CAHIER DE CLASSE, CARNET DE LECTURE & BILAN SOCLE
+    // -------------------------------------------------------------
+    function renderHomeworkAndReading() {
+      const student = getActiveStudent();
+
+      // Devoirs
+      const hwEl = document.getElementById('homeworkListStudent');
+      const hwList = student.homework || [];
+      hwEl.innerHTML = hwList.length === 0
+        ? `<div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-500">Aucun travail noté. Clique sur « Noter un travail » pour ajouter tes exercices de classe.</div>`
+        : hwList.map(hw => `
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">${hw.subject}</span>
+                  <span class="text-[11px] text-slate-400">${hw.date}</span>
+                </div>
+                <div class="font-bold text-sm text-slate-900 mt-1">${hw.title}</div>
+                <div class="text-xs text-slate-600">${hw.notes}</div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold shrink-0 ${hw.signedByParent ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${hw.signedByParent ? '✅ Signé parent' : '⏳ À signer'}
+              </span>
+            </div>
+          `).join('');
+
+      // Lectures
+      const bookEl = document.getElementById('readingListContainer');
+      const books = student.books || [];
+      bookEl.innerHTML = books.length === 0
+        ? `<div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-500">Aucun livre ajouté pour le moment.</div>`
+        : books.map(b => `
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-slate-900">📖 ${b.title}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">${b.category}</span>
+              </div>
+              <div class="text-[11px] text-indigo-700">${b.theme}</div>
+              <div class="text-xs text-slate-600">${b.summary}</div>
+            </div>
+          `).join('');
+
+      // Chant & Musique
+      const artEl = document.getElementById('artMusicChecklist');
+      if (!student.completedArtMusic) student.completedArtMusic = [];
+      artEl.innerHTML = ART_MUSIC_ITEMS.map(item => {
+        const checked = student.completedArtMusic.includes(item.id);
+        return `
+          <label class="flex items-center gap-2.5 p-2.5 rounded-xl border ${checked ? 'bg-pink-50 border-pink-200 text-pink-950' : 'bg-slate-50 border-slate-200'} cursor-pointer text-xs">
+            <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleArtMusic('${item.id}')" class="rounded text-pink-600" />
+            <span>${item.text}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function saveHomeworkEntry() {
+      const subject = document.getElementById('hwSubject').value;
+      const title = document.getElementById('hwTitle').value.trim();
+      const notes = document.getElementById('hwNotes').value.trim();
+      if (!title) return;
+
+      const student = getActiveStudent();
+      if (!student.homework) student.homework = [];
+      student.homework.unshift({
+        id: 'hw-' + Date.now(),
+        date: new Date().toLocaleDateString('fr-FR'),
+        subject,
+        title,
+        notes,
+        signedByParent: false
+      });
+      student.xp += 15;
+      document.getElementById('hwTitle').value = '';
+      document.getElementById('hwNotes').value = '';
+      closeModal('modalAddHomework');
+      saveAppState();
+      renderAll();
+    }
+
+    function saveBookEntry() {
+      const title = document.getElementById('bookTitleInput').value.trim();
+      const category = document.getElementById('bookCategoryInput').value;
+      const theme = document.getElementById('bookThemeInput').value;
+      const summary = document.getElementById('bookSummaryInput').value.trim();
+      if (!title) return;
+
+      const student = getActiveStudent();
+      if (!student.books) student.books = [];
+      student.books.push({ title, category, theme, summary });
+      student.xp += 25;
+      document.getElementById('bookTitleInput').value = '';
+      document.getElementById('bookSummaryInput').value = '';
+      closeModal('modalAddBook');
+      saveAppState();
+      renderAll();
+    }
+
+    function toggleArtMusic(itemId) {
+      const student = getActiveStudent();
+      if (!student.completedArtMusic) student.completedArtMusic = [];
+      const idx = student.completedArtMusic.indexOf(itemId);
+      if (idx === -1) {
+        student.completedArtMusic.push(itemId);
+        student.xp += 15;
+      } else {
+        student.completedArtMusic.splice(idx, 1);
+      }
+      saveAppState();
+      renderAll();
+    }
+
+    function renderSocleAndReperes() {
+      const student = getActiveStudent();
+      const socleContainer = document.getElementById('socleDomainsProgress');
+      socleContainer.innerHTML = SOCLE_DOMAINS.map(dom => {
+        const comps = appData.curriculum.filter(m => (m.socleDomain || 1) === dom.id).flatMap(m => m.competencies);
+        const done = comps.filter(c => student.completedCompetencies.includes(c.id)).length;
+        const pct = comps.length > 0 ? Math.round((done / comps.length) * 100) : 0;
+        return `
+          <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="flex justify-between text-xs font-bold">
+              <span>${dom.name}</span>
+              <span class="text-indigo-700">${pct}% (${done}/${comps.length})</span>
+            </div>
+            <p class="text-[11px] text-slate-500">${dom.desc}</p>
+            <div class="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+              <div class="h-full bg-indigo-600" style="width:${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const repContainer = document.getElementById('reperesChecklistContainer');
+      if (!student.completedReperes) student.completedReperes = [];
+      repContainer.innerHTML = REPERES_ITEMS.map(rep => {
+        const checked = student.completedReperes.includes(rep.id);
+        return `
+          <label class="flex items-start gap-2.5 p-3 rounded-xl border ${checked ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'} cursor-pointer text-xs">
+            <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleRepereItem('${rep.id}')" class="mt-0.5 rounded text-emerald-600" />
+            <span><strong>[${rep.level}]</strong> ${rep.text}</span>
+          </label>
+        `;
+      }).join('');
+    }
+
+    function toggleRepereItem(repId) {
+      const student = getActiveStudent();
+      if (!student.completedReperes) student.completedReperes = [];
+      const idx = student.completedReperes.indexOf(repId);
+      if (idx === -1) {
+        student.completedReperes.push(repId);
+        student.xp += 20;
+      } else {
+        student.completedReperes.splice(idx, 1);
+      }
+      saveAppState();
+      renderAll();
+    }
+
+    // -------------------------------------------------------------
+    // 12. ESPACE PARENT & ESPACE ENSEIGNANT
+    // -------------------------------------------------------------
+    function renderParentDemoCodes() {
+      const el = document.getElementById('demoParentCodesList');
+      el.innerHTML = appData.students.map(s => `
+        <button onclick="document.getElementById('parentCodeInput').value='${s.parentCode}'" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-indigo-100 text-slate-700 font-mono text-xs border border-slate-200">
+          ${s.parentCode} (${s.name})
+        </button>
+      `).join('');
+    }
+
+    function loginParent() {
+      const code = document.getElementById('parentCodeInput').value.trim().toUpperCase();
+      const matched = appData.students.find(s => s.parentCode.toUpperCase() === code);
+      const errEl = document.getElementById('parentLoginError');
+      if (!matched) {
+        errEl.classList.remove('hidden');
+        return;
+      }
+      errEl.classList.add('hidden');
+      loggedInParentStudentId = matched.id;
+      document.getElementById('parentLoginCard').classList.add('hidden');
+      document.getElementById('parentDashboard').classList.remove('hidden');
+      renderParentDashboard();
+    }
+
+    function logoutParent() {
+      loggedInParentStudentId = null;
+      document.getElementById('parentLoginCard').classList.remove('hidden');
+      document.getElementById('parentDashboard').classList.add('hidden');
+    }
+
+    function renderParentDashboard() {
+      if (!loggedInParentStudentId) return;
+      const student = appData.students.find(s => s.id === loggedInParentStudentId);
+      if (!student) return;
+
+      document.getElementById('parentChildTitle').textContent = `Dossier Exclusif de ${student.name} (${student.level}) — ${student.xp} XP`;
+      document.getElementById('parentMessageInput').value = student.parentMessage || '';
+
+      const breakdownEl = document.getElementById('parentSubjectBreakdown');
+      breakdownEl.innerHTML = SUBJECTS_META.map(s => {
+        const mods = appData.curriculum.filter(m => m.subject === s.id);
+        const comps = mods.flatMap(m => m.competencies);
+        const done = comps.filter(c => student.completedCompetencies.includes(c.id)).length;
+        const pct = comps.length > 0 ? Math.round((done / comps.length) * 100) : 0;
+        const scores = mods.map(m => (student.evaluationScores || {})[m.id]).filter(Boolean);
+
+        return `
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="flex flex-wrap justify-between text-xs font-bold gap-2">
+              <span>${s.label}</span>
+              <div class="flex items-center gap-2">
+                ${scores.length > 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">Éval : ${scores.join(', ')}</span>` : ''}
+                <span class="text-indigo-700">${done}/${comps.length} acquis (${pct}%)</span>
+              </div>
+            </div>
+            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-600" style="width:${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const hwEl = document.getElementById('parentHomeworkToSign');
+      const hwList = student.homework || [];
+      hwEl.innerHTML = hwList.length === 0
+        ? `<p class="text-xs text-slate-400">Aucun travail en attente.</p>`
+        : hwList.map(hw => `
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2 text-xs">
+              <div>
+                <strong>[${hw.subject}] ${hw.title}</strong>
+                <p class="text-slate-500">${hw.notes}</p>
+              </div>
+              ${
+                hw.signedByParent
+                  ? `<span class="text-emerald-700 font-bold">✅ Signé</span>`
+                  : `<button onclick="signHomeworkByParent('${hw.id}')" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold">Signer</button>`
+              }
+            </div>
+          `).join('');
+
+      const compEl = document.getElementById('parentCompetenciesList');
+      compEl.innerHTML = appData.curriculum.map(mod => `
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="text-xs font-bold text-indigo-800">${mod.level} • ${mod.subject} — ${mod.title}</div>
+          ${mod.competencies.map(c => {
+            const checked = student.completedCompetencies.includes(c.id);
+            return `
+              <label class="flex items-start gap-2 text-xs cursor-pointer">
+                <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleCompetency('${c.id}', '${student.id}')" class="mt-0.5 rounded text-emerald-600" />
+                <span>${c.text}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      `).join('');
+    }
+
+    function saveParentMessage() {
+      if (!loggedInParentStudentId) return;
+      const student = appData.students.find(s => s.id === loggedInParentStudentId);
+      student.parentMessage = document.getElementById('parentMessageInput').value.trim();
+      saveAppState();
+      renderAll();
+      alert('Message enregistré pour ' + student.name + ' !');
+    }
+
+    function signHomeworkByParent(hwId) {
+      if (!loggedInParentStudentId) return;
+      const student = appData.students.find(s => s.id === loggedInParentStudentId);
+      const hw = (student.homework || []).find(h => h.id === hwId);
+      if (hw) {
+        hw.signedByParent = true;
+        student.xp += 10;
+        saveAppState();
+        renderAll();
+      }
+    }
+
+    function loginAdmin() {
+      const pass = document.getElementById('adminPassInput').value.trim();
+      if (pass === 'prof2026' || pass === 'prof2025' || pass === 'admin') {
+        document.getElementById('adminLoginCard').classList.add('hidden');
+        document.getElementById('adminDashboard').classList.remove('hidden');
+        renderAdminTable();
+      } else {
+        alert('Mot de passe incorrect (par défaut : prof2026)');
+      }
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('adminStudentsTableBody');
+      const allCompsCount = appData.curriculum.flatMap(m => m.competencies).length;
+      document.getElementById('adminStudentCountBadge').textContent = `${appData.students.length} élèves actifs`;
+
+      tbody.innerHTML = appData.students.map(s => {
+        const evalCount = Object.keys(s.evaluationScores || {}).length;
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 font-bold text-slate-900">${s.name}</td>
+            <td class="py-3 px-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">${s.level}</span></td>
+            <td class="py-3 px-4 font-mono text-xs font-bold text-emerald-700">${s.parentCode}</td>
+            <td class="py-3 px-4 font-bold text-amber-700">${s.xp} XP</td>
+            <td class="py-3 px-4">${s.completedCompetencies.length} / ${allCompsCount}</td>
+            <td class="py-3 px-4">${evalCount} éval(s)</td>
+            <td class="py-3 px-4">${s.weeklyProblems || 0} / 10</td>
+            <td class="py-3 px-4 text-right">
+              <button onclick="selectStudentFromAdmin('${s.id}')" class="text-xs font-bold text-indigo-600 hover:underline mr-2">Ouvrir</button>
+              <button onclick="deleteStudent('${s.id}')" class="text-xs font-bold text-red-600 hover:underline">Supprimer</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function createNewStudent() {
+      const name = document.getElementById('newStudentName').value.trim();
+      const level = document.getElementById('newStudentLevel').value;
+      let parentCode = document.getElementById('newStudentParentCode').value.trim().toUpperCase();
+      if (!name) return;
+      if (!parentCode) parentCode = 'PAR-' + name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+
+      const newStu = {
+        id: 'stu-' + Date.now(),
+        name,
+        level,
+        parentCode,
+        xp: 0,
+        weeklyProblems: 0,
+        completedCompetencies: [],
+        completedReperes: [],
+        completedArtMusic: [],
+        solvedProblems: [],
+        evaluationScores: {},
+        parentMessage: `Bon courage ${name} pour ton parcours pas à pas !`,
+        books: [],
+        homework: []
+      };
+
+      appData.students.push(newStu);
+      activeStudentId = newStu.id;
+      closeModal('modalAddStudent');
+      saveAppState();
+      renderAll();
+    }
+
+    function deleteStudent(stuId) {
+      if (appData.students.length <= 1) return;
+      appData.students = appData.students.filter(s => s.id !== stuId);
+      if (activeStudentId === stuId) activeStudentId = appData.students[0].id;
+      saveAppState();
+      renderAll();
+    }
+
+    function selectStudentFromAdmin(stuId) {
+      activeStudentId = stuId;
+      switchRole('student');
+      renderAll();
+    }
+
+    function exportAllDataJSON() {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute('href', dataStr);
+      a.setAttribute('download', 'sauvegarde_cap_reussite_cm1_cm2.json');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // -------------------------------------------------------------
+    // 13. NAVIGATION GÉNÉRALE & INITIALISATION
+    // -------------------------------------------------------------
+    function switchRole(role) {
+      document.getElementById('viewStudent').classList.toggle('hidden', role !== 'student');
+      document.getElementById('viewParent').classList.toggle('hidden', role !== 'parent');
+      document.getElementById('viewAdmin').classList.toggle('hidden', role !== 'admin');
+
+      document.getElementById('btnRoleStudent').className = role === 'student'
+        ? 'px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-amber-400 text-indigo-950 shadow flex items-center gap-1.5 transition'
+        : 'px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-indigo-800 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition';
+
+      document.getElementById('btnRoleParent').className = role === 'parent'
+        ? 'px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-amber-400 text-indigo-950 shadow flex items-center gap-1.5 transition'
+        : 'px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-indigo-800 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition';
+
+      document.getElementById('btnRoleAdmin').className = role === 'admin'
+        ? 'px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-amber-400 text-indigo-950 shadow flex items-center gap-1.5 transition'
+        : 'px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold bg-indigo-800 hover:bg-indigo-700 text-white flex items-center gap-1.5 transition';
+
+      renderAll();
+    }
+
+    function changeActiveStudent(stuId) {
+      activeStudentId = stuId;
+      if (openedModuleId) closeModuleStepView();
+      renderAll();
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    }
+
+    function renderAll() {
+      renderStudentHeader();
+      renderSubjectCardsAndChapters();
+      renderProblemsWorkshop();
+      renderHomeworkAndReading();
+      renderSocleAndReperes();
+      renderParentDemoCodes();
+      renderParentDashboard();
+      renderAdminTable();
+      lucide.createIcons();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAppState();
+      renderAll();
+    });
+  </script>
+</body>
+</html>
